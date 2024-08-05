@@ -46,14 +46,13 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const theme = useTheme()
-  console.log(theme.colors.background)
+
   return (
     <PaperProvider>
       <ThemedBackground>
         <Stack>
           <Stack.Screen name='index' options={{
-            header: (props) => <CustomHeader title="Home" />
+            header: (props) => <CustomHeader title="Home" {...props} />
           }} />
           <Stack.Screen name='two' options={{
             header: (props) => <CustomHeader title="Two" {...props} />

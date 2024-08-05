@@ -5,7 +5,7 @@ import { Text } from 'react-native-paper';
 export default function TabTwoScreen() {
   return (
     <ThemedBackground style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
+      <Text style={styles.title}>Page Two</Text>
       <View style={styles.separator} />
     </ThemedBackground>
   );
