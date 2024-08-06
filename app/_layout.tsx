@@ -5,7 +5,8 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { Provider as PaperProvider, useTheme } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
+import auth from '@react-native-firebase/auth';
 import 'react-native-reanimated';
 
 export {
@@ -50,13 +51,14 @@ function RootLayoutNav() {
   return (
     <PaperProvider>
       <ThemedBackground>
-        <Stack>
-          <Stack.Screen name='index' options={{
-            header: (props) => <CustomHeader title="Home" {...props} />
+        <Stack screenOptions={{
+          headerShown: false
+        }} >
+          <Stack.Screen name='sign-in' options={{
+            headerShown: true,
+            header: (props) => <CustomHeader {...props} />
           }} />
-          <Stack.Screen name='two' options={{
-            header: (props) => <CustomHeader title="Two" {...props} />
-          }} />
+          <Stack.Screen name='(app)' />
         </Stack>
       </ThemedBackground>
     </PaperProvider>
