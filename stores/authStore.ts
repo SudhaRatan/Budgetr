@@ -1,6 +1,12 @@
+import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { create } from "zustand";
 
-export const useAuthStore = create((set, get) => ({
+interface authType {
+    user: FirebaseAuthTypes.User | null;
+    setUser: (user : FirebaseAuthTypes.User | null) => void
+}
+
+export const useAuthStore = create<authType>()((set, get) => ({
     user: null,
-    setUser: (userInfo: any) => set((state: any) => ({ user: userInfo })),
+    setUser: (userInfo) => set((state: any) => ({ user: userInfo })),
 }))

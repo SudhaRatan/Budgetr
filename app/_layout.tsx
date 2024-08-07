@@ -8,16 +8,14 @@ import { useEffect } from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import 'react-native-reanimated';
+import { useAuthStore } from '@/stores/authStore';
+
+export const firebaseAuth = auth
 
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
-
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,6 +25,9 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
+
+  const user = useAuthStore((state) => state.user)
+  const setUser = useAuthStore((state) => state.setUser)
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -38,6 +39,14 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+
+  useEffect(() => {
+    const subscriber = firebaseAuth().onAuthStateChanged((user) => {
+      setUser(user)
+    });
+    return subscriber; // unsubscribe on unmount
+  }, []);
 
   if (!loaded) {
     return null;

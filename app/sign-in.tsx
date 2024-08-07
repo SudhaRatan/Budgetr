@@ -1,11 +1,11 @@
 import ThemedBackground from "@/components/ThemedBackground"
 import { useAuthStore } from "@/stores/authStore"
 import { GoogleSignin } from "@react-native-google-signin/google-signin"
-import { router } from "expo-router"
+import { Redirect, router } from "expo-router"
 import { View } from "react-native"
 import { Button, Text, TextInput } from "react-native-paper"
-import auth from '@react-native-firebase/auth';
 import { useEffect } from "react"
+import { firebaseAuth as auth } from "./_layout"
 
 GoogleSignin.configure({
     webClientId: '178674599133-idkpin1nac99bd67coa452khsr7gorck.apps.googleusercontent.com',
@@ -24,12 +24,11 @@ async function onGoogleButtonPress() {
 
 const SignIn = () => {
 
-    useEffect(() => {
-        const subscriber = auth().onAuthStateChanged((user) => {
-            console.log(user)
-        });
-        return subscriber; // unsubscribe on unmount
-    }, []);
+    const user = useAuthStore((state) => state.user)
+
+    if (user) {
+        return <Redirect href={"/(app)"} />
+    }
 
     const logout = () => {
         auth().signOut()

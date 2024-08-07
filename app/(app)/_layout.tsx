@@ -2,6 +2,7 @@ import CustomHeader from '@/components/CustomHeader';
 import ThemedBackground from '@/components/ThemedBackground';
 import { useAuthStore } from '@/stores/authStore';
 import { Redirect, router, Stack } from 'expo-router';
+import { firebaseAuth } from '../_layout';
 
 export default function AuthenticatedScreen() {
 
@@ -13,7 +14,7 @@ function AuthenticatedScreenNav() {
   const user = useAuthStore((state: any) => state.user)
 
   const logout = () => {
-    router.replace("/sign-in")
+    firebaseAuth().signOut()
   }
 
   if(user == null){
