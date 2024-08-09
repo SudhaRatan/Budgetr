@@ -1,10 +1,9 @@
 import ThemedBackground from "@/components/ThemedBackground"
 import { useAuthStore } from "@/stores/authStore"
-import { GoogleSignin, GoogleSigninButton } from "@react-native-google-signin/google-signin"
-import { Redirect, router } from "expo-router"
+import { GoogleSignin } from "@react-native-google-signin/google-signin"
+import { Redirect } from "expo-router"
 import { View } from "react-native"
-import { Button, Divider, Surface, Text, TextInput, TouchableRipple, useTheme } from "react-native-paper"
-import { useEffect } from "react"
+import { Button, Divider, Text} from "react-native-paper"
 import { firebaseAuth as auth } from "./_layout"
 
 GoogleSignin.configure({
@@ -24,7 +23,6 @@ async function onGoogleButtonPress() {
 
 const SignIn = () => {
 
-    const theme = useTheme()
     const user = useAuthStore((state) => state.user)
 
     if (user) {
@@ -36,17 +34,8 @@ const SignIn = () => {
             <View style={{ flex: 1, justifyContent: "center", padding: 20, gap: 20 }}>
                 <Text variant="headlineLarge" style={{ fontWeight: "bold", textAlign: "left" }}>Welcome to Budgetr 💸</Text>
                 <Text variant="headlineSmall" style={{ fontWeight: "bold", textAlign: "left" }}>Get control of your money</Text>
-
                 <Divider />
-                {/* <Surface> */}
-                    <TouchableRipple style={{ flexDirection: "row", backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.primary, alignItems: "center", justifyContent: "space-between", borderRadius: theme.roundness }} onPress={onGoogleButtonPress}>
-                        <>
-                            <GoogleSigninButton size={2} style={{elevation: 0}} />
-                            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Sign in with google</Text>
-                            <View style={{ width: 30 }}></View>
-                        </>
-                    </TouchableRipple>
-                {/* </Surface> */}
+                <Button icon={"google"} onPress={onGoogleButtonPress} mode="contained">Sign in with google</Button>
             </View>
         </ThemedBackground>
     )
