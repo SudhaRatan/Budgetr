@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { GoogleSignin, GoogleSigninButton } from "@react-native-google-signin/google-signin"
 import { Redirect, router } from "expo-router"
 import { View } from "react-native"
-import { Button, Divider, Text, TextInput, TouchableRipple, useTheme } from "react-native-paper"
+import { Button, Divider, Surface, Text, TextInput, TouchableRipple, useTheme } from "react-native-paper"
 import { useEffect } from "react"
 import { firebaseAuth as auth } from "./_layout"
 
@@ -34,16 +34,19 @@ const SignIn = () => {
     return (
         <ThemedBackground>
             <View style={{ flex: 1, justifyContent: "center", padding: 20, gap: 20 }}>
-                <Text variant="headlineLarge" style={{fontWeight:"bold"}}>Welcome to Budgetr 💸</Text>
-                
+                <Text variant="headlineLarge" style={{ fontWeight: "bold", textAlign: "left" }}>Welcome to Budgetr 💸</Text>
+                <Text variant="headlineSmall" style={{ fontWeight: "bold", textAlign: "left" }}>Get control of your money</Text>
+
                 <Divider />
-                <TouchableRipple style={{ flexDirection: "row", backgroundColor: theme.colors.primary, alignItems:"center", justifyContent:"space-between", borderRadius: theme.roundness }} onPress={onGoogleButtonPress}>
-                    <>
-                        <GoogleSigninButton color="dark" size={2} />
-                        <Text style={{color: theme.colors.secondaryContainer, fontSize: 18, fontWeight:"bold"}}>Sign in with google</Text>
-                        <View style={{width:24}}></View>
-                    </>
-                </TouchableRipple>
+                {/* <Surface> */}
+                    <TouchableRipple style={{ flexDirection: "row", backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.primary, alignItems: "center", justifyContent: "space-between", borderRadius: theme.roundness }} onPress={onGoogleButtonPress}>
+                        <>
+                            <GoogleSigninButton size={2} style={{elevation: 0}} />
+                            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Sign in with google</Text>
+                            <View style={{ width: 30 }}></View>
+                        </>
+                    </TouchableRipple>
+                {/* </Surface> */}
             </View>
         </ThemedBackground>
     )
