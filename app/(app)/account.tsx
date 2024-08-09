@@ -5,7 +5,7 @@ import { Text } from 'react-native-paper';
 export default function Account() {
   return (
     <ThemedBackground style={styles.container}>
-      <Text style={styles.title}>Page Account</Text>
+      <Text style={styles.title}>Account page</Text>
       <View style={styles.separator} />
     </ThemedBackground>
   );

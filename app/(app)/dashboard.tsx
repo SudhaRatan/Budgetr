@@ -2,10 +2,10 @@ import ThemedBackground from '@/components/ThemedBackground';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-export default function TabTwoScreen() {
+export default function Dashboard() {
   return (
     <ThemedBackground style={styles.container}>
-      <Text style={styles.title}>Page Two</Text>
+      <Text style={styles.title}>Dashboard page</Text>
       <View style={styles.separator} />
     </ThemedBackground>
   );

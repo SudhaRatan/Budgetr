@@ -2,10 +2,10 @@ import ThemedBackground from '@/components/ThemedBackground';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-export default function Three() {
+export default function Categories() {
   return (
     <ThemedBackground style={styles.container}>
-      <Text style={styles.title}>Page Three</Text>
+      <Text style={styles.title}>Categories page</Text>
       <View style={styles.separator} />
     </ThemedBackground>
   );

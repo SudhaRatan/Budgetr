@@ -3,10 +3,8 @@ import ThemedBackground from '@/components/ThemedBackground';
 import { useAuthStore } from '@/stores/authStore';
 import { Redirect, Tabs } from 'expo-router';
 import { firebaseAuth } from '../_layout';
-import { Text, useTheme } from 'react-native-paper';
-import { View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import TabIcon from '@/components/TabIcon';
-import { Children } from 'react';
 import TabLabel from '@/components/TabLabel';
 
 export default function AuthenticatedScreen() {
@@ -31,7 +29,7 @@ function AuthenticatedScreenNav() {
 
   return (
     <ThemedBackground>
-      <Tabs screenOptions={{
+      <Tabs initialRouteName='index' screenOptions={{
         tabBarStyle: {
           backgroundColor: theme.colors.background,
           borderTopWidth: 0,
@@ -48,12 +46,12 @@ function AuthenticatedScreenNav() {
           tabBarIcon: (props) => <TabIcon focusedSource='home' source='home-outline' {...props} focusedColor={theme.colors.primary} />,
           tabBarLabel: (props) => <TabLabel {...props} focusedColor={theme.colors.primary} />,
         }} />
-        <Tabs.Screen name='two' options={{
+        <Tabs.Screen name='categories' options={{
           header: (props) => <CustomHeader title="Two" {...props} />,
           tabBarIcon: (props) => <TabIcon focusedSource='view-grid' source='view-grid-outline' {...props} focusedColor={theme.colors.primary} />,
           tabBarLabel: (props) => <TabLabel {...props} focusedColor={theme.colors.primary} />,
         }} />
-        <Tabs.Screen name='three' options={{
+        <Tabs.Screen name='dashboard' options={{
           header: (props) => <CustomHeader title="Three" {...props} />,
           tabBarIcon: (props) => <TabIcon focusedSource='chart-box' source='chart-box-outline' {...props} focusedColor={theme.colors.primary} />,
           tabBarLabel: (props) => <TabLabel {...props} focusedColor={theme.colors.primary} />,
