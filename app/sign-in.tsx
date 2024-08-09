@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { GoogleSignin } from "@react-native-google-signin/google-signin"
 import { Redirect } from "expo-router"
 import { View } from "react-native"
-import { Button, Divider, Text} from "react-native-paper"
+import { Button, Divider, Text, useTheme } from "react-native-paper"
 import { firebaseAuth as auth } from "./_layout"
 
 GoogleSignin.configure({
@@ -24,6 +24,7 @@ async function onGoogleButtonPress() {
 const SignIn = () => {
 
     const user = useAuthStore((state) => state.user)
+    const theme = useTheme()
 
     if (user) {
         return <Redirect href={"/(app)"} />
@@ -31,11 +32,18 @@ const SignIn = () => {
 
     return (
         <ThemedBackground>
-            <View style={{ flex: 1, justifyContent: "center", padding: 20, gap: 20 }}>
-                <Text variant="headlineLarge" style={{ fontWeight: "bold", textAlign: "left" }}>Welcome to Budgetr 💸</Text>
-                <Text variant="headlineSmall" style={{ fontWeight: "bold", textAlign: "left" }}>Get control of your money</Text>
-                <Divider />
-                <Button icon={"google"} onPress={onGoogleButtonPress} mode="contained">Sign in with google</Button>
+            <View style={{ flex: 1, justifyContent: "center", padding: 20, gap: 100 }}>
+                <View style={{ flex: 1 }}></View>
+                <Text variant="headlineMedium" style={{ fontWeight: "bold", textAlign: "left", fontFamily: "monospace" }}>Welcome to Budgetr💸</Text>
+                <View style={{ flex: 10, flexDirection: "row", flexWrap: "wrap" }}>
+                    <Text variant="displayMedium" style={{ fontWeight: "bold", fontFamily: "monospace", color: theme.colors.primary }}>TAKE CONTROL </Text>
+                    <Text variant="displaySmall" style={{ fontFamily: "monospace", color: theme.colors.secondary }}>OF YOUR </Text>
+                    <Text variant="displayMedium" style={{ fontWeight: "bold", fontFamily: "monospace", color: theme.colors.tertiary }}>FINANCES</Text>
+                </View>
+                <View style={{gap:10}}>
+                    <Divider />
+                    <Button icon={"google"} onPress={onGoogleButtonPress} mode="contained">Sign in with google</Button>
+                </View>
             </View>
         </ThemedBackground>
     )
