@@ -14,10 +14,12 @@ function AuthenticatedScreenNav() {
   const user = useAuthStore((state: any) => state.user)
 
   const logout = () => {
-    firebaseAuth().signOut()
+    if (user) {
+      firebaseAuth().signOut()
+    }
   }
 
-  if(user == null){
+  if (user == null) {
     return <Redirect href={"/sign-in"} />
   }
 

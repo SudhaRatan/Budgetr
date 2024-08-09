@@ -1,9 +1,9 @@
 import ThemedBackground from "@/components/ThemedBackground"
 import { useAuthStore } from "@/stores/authStore"
-import { GoogleSignin } from "@react-native-google-signin/google-signin"
+import { GoogleSignin, GoogleSigninButton } from "@react-native-google-signin/google-signin"
 import { Redirect, router } from "expo-router"
 import { View } from "react-native"
-import { Button, Text, TextInput } from "react-native-paper"
+import { Button, Divider, Text, TextInput, TouchableRipple, useTheme } from "react-native-paper"
 import { useEffect } from "react"
 import { firebaseAuth as auth } from "./_layout"
 
@@ -24,30 +24,26 @@ async function onGoogleButtonPress() {
 
 const SignIn = () => {
 
+    const theme = useTheme()
     const user = useAuthStore((state) => state.user)
 
     if (user) {
         return <Redirect href={"/(app)"} />
     }
 
-    const logout = () => {
-        auth().signOut()
-    }
-
     return (
         <ThemedBackground>
             <View style={{ flex: 1, justifyContent: "center", padding: 20, gap: 20 }}>
-                <Text variant="headlineLarge">Login </Text>
-                <TextInput
-                    mode="flat"
-                    label="Email"
-                />
-                <TextInput
-                    mode="flat"
-                    label="Password"
-                />
-                <Button onPress={() => { onGoogleButtonPress() }} mode="contained">Log in</Button>
-                <Button onPress={() => { logout() }} mode="contained">Log out</Button>
+                <Text variant="headlineLarge" style={{fontWeight:"bold"}}>Welcome to Budgetr 💸</Text>
+                
+                <Divider />
+                <TouchableRipple style={{ flexDirection: "row", backgroundColor: theme.colors.primary, alignItems:"center", justifyContent:"space-between", borderRadius: theme.roundness }} onPress={onGoogleButtonPress}>
+                    <>
+                        <GoogleSigninButton color="dark" size={2} />
+                        <Text style={{color: theme.colors.secondaryContainer, fontSize: 18, fontWeight:"bold"}}>Sign in with google</Text>
+                        <View style={{width:24}}></View>
+                    </>
+                </TouchableRipple>
             </View>
         </ThemedBackground>
     )
