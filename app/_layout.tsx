@@ -1,5 +1,5 @@
-import CustomHeader from '@/components/CustomHeader';
-import ThemedBackground from '@/components/ThemedBackground';
+import CustomHeader from '@/src/components/CustomHeader';
+import ThemedBackground from '@/src/components/ThemedBackground';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import 'react-native-reanimated';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/src/stores/authStore';
 
 export const firebaseAuth = auth
 

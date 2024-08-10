@@ -1,5 +1,5 @@
-import ThemedBackground from "@/components/ThemedBackground"
-import { useAuthStore } from "@/stores/authStore"
+import ThemedBackground from "@/src/components/ThemedBackground"
+import { useAuthStore } from "@/src/stores/authStore"
 import { GoogleSignin } from "@react-native-google-signin/google-signin"
 import { Redirect } from "expo-router"
 import { View } from "react-native"

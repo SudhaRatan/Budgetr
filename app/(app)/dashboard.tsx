@@ -1,4 +1,4 @@
-import ThemedBackground from '@/components/ThemedBackground';
+import ThemedBackground from '@/src/components/ThemedBackground';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 

@@ -1,11 +1,13 @@
-import CustomHeader from '@/components/CustomHeader';
-import ThemedBackground from '@/components/ThemedBackground';
-import { useAuthStore } from '@/stores/authStore';
+import CustomHeader from '@/src/components/CustomHeader';
+import ThemedBackground from '@/src/components/ThemedBackground';
+import { useAuthStore } from '@/src/stores/authStore';
 import { Redirect, Tabs } from 'expo-router';
 import { firebaseAuth } from '../_layout';
 import { useTheme } from 'react-native-paper';
-import TabIcon from '@/components/TabIcon';
-import TabLabel from '@/components/TabLabel';
+import TabIcon from '@/src/components/TabIcon';
+import TabLabel from '@/src/components/TabLabel';
+import { useEffect } from 'react';
+import { getCategories } from '@/src/bl/dbFunctions';
 
 export default function AuthenticatedScreen() {
 
@@ -14,8 +16,8 @@ export default function AuthenticatedScreen() {
 
 function AuthenticatedScreenNav() {
 
-  const user = useAuthStore((state: any) => state.user)
- const theme = useTheme()
+  const user = useAuthStore((state) => state.user)
+  const theme = useTheme()
 
   const logout = () => {
     if (user) {
@@ -27,6 +29,12 @@ function AuthenticatedScreenNav() {
     return <Redirect href={"/sign-in"} />
   }
 
+  useEffect(() => {
+    setTimeout(() => {
+      getCategories(user.uid)
+    }, 2000)
+  }, [])
+
   return (
     <ThemedBackground>
       <Tabs initialRouteName='index' screenOptions={{
@@ -35,7 +43,7 @@ function AuthenticatedScreenNav() {
           borderTopWidth: 0,
           elevation: 0
         },
-        tabBarVisibilityAnimationConfig:{show: {animation:"spring", config:{}}, hide:{animation:"spring", config:{}}},
+        tabBarVisibilityAnimationConfig: { show: { animation: "spring", config: {} }, hide: { animation: "spring", config: {} } },
         tabBarShowLabel: false,
         tabBarIconStyle: {
           padding: 10
