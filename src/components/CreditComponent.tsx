@@ -1,6 +1,11 @@
-import { Dimensions, TouchableOpacity, View } from "react-native";
+import { Dimensions, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
-import { Text, useTheme, Menu, Button, Divider } from "react-native-paper";
+import {
+  Text,
+  useTheme,
+  Icon,
+  MD3Theme,
+} from "react-native-paper";
 import { category } from "../types/dbTypes";
 
 const CreditComponent = ({
@@ -21,8 +26,7 @@ const CreditComponent = ({
   const closeMenu = () => setVisible(false);
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.5}
+    <Pressable
       style={{
         padding: 10,
         width: width / 2 - 1.5 * cardPadding,
@@ -48,57 +52,90 @@ const CreditComponent = ({
             backgroundColor: theme.colors.surface,
             padding: 20,
             borderRadius: 100,
-            color: theme.dark ? theme.colors.background: '',
+            color: theme.dark ? theme.colors.background : "",
           }}
         >
           {emoji}
         </Text>
         <Text
-          style={{ fontFamily: "monospace", color: theme.dark ? theme.colors.background: '',  }}
+          style={{
+            fontFamily: "monospace",
+            color: theme.dark ? theme.colors.background : "",
+          }}
         >
           {name}
         </Text>
       </View>
-
-      <Menu
-        visible={visible}
-        onDismiss={closeMenu}
-        anchor={
-          <View
+      {!visible ? (
+        <View
+          style={{
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            variant="headlineSmall"
             style={{
-              alignItems: "center",
-              flexDirection: "row",
-              justifyContent: "center",
+              color: theme.dark
+                ? theme.colors.surfaceVariant
+                : theme.colors.onSurfaceDisabled,
+              fontWeight: "bold",
             }}
           >
-            <Text
-              variant="headlineSmall"
-              style={{
-                color: theme.dark ? theme.colors.surfaceVariant: theme.colors.onSurfaceDisabled,
-                fontWeight: "bold",
-              }}
-            >
-              &#8377;{" "}
-            </Text>
-            <Text
-              variant="headlineLarge"
-              style={{
-                fontWeight: "bold",
-                textAlign: "center",
-                fontFamily: "monospace",
-                color: theme.dark ? theme.colors.background: '',
-              }}
-            >
-              {totalAmount}
-            </Text>
-          </View>
-        }
-      >
-        <Menu.Item onPress={() => {}} title="Edit" leadingIcon="pencil" />
-        <Menu.Item onPress={() => {}} title="Delete" leadingIcon="delete" />
-      </Menu>
-    </TouchableOpacity>
+            &#8377;{" "}
+          </Text>
+          <Text
+            variant="headlineLarge"
+            style={{
+              fontWeight: "bold",
+              textAlign: "center",
+              fontFamily: "monospace",
+              color: theme.dark ? theme.colors.background : "",
+            }}
+          >
+            {totalAmount}
+          </Text>
+        </View>
+      ) : (
+        <CreditComponentActions closeMenu={closeMenu} />
+      )}
+    </Pressable>
   );
 };
 
 export default CreditComponent;
+
+function CreditComponentActions({closeMenu}: any) {
+  const theme = useTheme()
+  const style = styles(theme)
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "flex-end",
+        gap: 10,
+      }}
+    >
+      <TouchableOpacity style={style.action} onPress={closeMenu}>
+        <Icon source="close" size={20} />
+      </TouchableOpacity>
+      <TouchableOpacity style={style.action}>
+        <Icon source="pencil" size={20} />
+      </TouchableOpacity>
+      <TouchableOpacity style={style.action}>
+        <Icon source="delete" size={20} />
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = (theme: MD3Theme) =>  StyleSheet.create({
+  action: {
+    padding: 15,
+    backgroundColor: theme.colors.background,
+    borderRadius: 100,
+  }
+})

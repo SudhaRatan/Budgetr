@@ -1,17 +1,24 @@
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import ThemedBackground from "@/src/components/ThemedBackground";
-import { Icon, Text, useTheme } from "react-native-paper";
+import { Icon, Portal, Text, useTheme } from "react-native-paper";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useDataStore } from "@/src/stores/dataStore";
 import CreditComponent from "@/src/components/CreditComponent";
-// import Emojis from "unicode-emoji-json/data-ordered-emoji.json";
+import BottomSheet from "@/src/components/BottomSheet";
+import { useRef, useState } from "react";
+import CategoryForm from "@/src/components/CategoryForm";
 
 export default function Home() {
   const theme = useTheme();
+  const [formvisible,setformvisible] = useState(false)
   const categories = useDataStore((state) => state.categories);
   const { width } = Dimensions.get("screen");
   const cardPadding = 10;
-  // console.log(Emojis);
+  const BSRef = useRef<any>();
+
+  const onCloseForm = () => {
+    setformvisible(false)
+  }
 
   return (
     <ThemedBackground style={styles.container}>
@@ -76,7 +83,10 @@ export default function Home() {
                   padding: 30,
                   borderRadius: 100,
                 }}
-                onPress={() => {}}
+                onPress={() => {
+                  BSRef.current.open();
+                  setformvisible(true)
+                }}
               >
                 <Icon size={20} source="plus" />
               </TouchableOpacity>
@@ -86,6 +96,9 @@ export default function Home() {
       ) : (
         <Text style={styles.title}>Loading...</Text>
       )}
+      <Portal>
+        <BottomSheet onClose={onCloseForm} ref={BSRef}>{formvisible && <CategoryForm />}</BottomSheet>
+      </Portal>
     </ThemedBackground>
   );
 }
