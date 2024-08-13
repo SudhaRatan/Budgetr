@@ -27,8 +27,6 @@ import { useTheme } from "react-native-paper";
 
 const BottomSheet = forwardRef(
   ({ children, className, style, onClose }: any, ref) => {
-    const { width } = Dimensions.get("screen");
-    const bottomSheetWidth = width - 40;
 
     const insets = useSafeAreaInsets();
 
@@ -75,7 +73,7 @@ const BottomSheet = forwardRef(
 
     const close = useCallback(() => {
       translate.value = withTiming(bottomBarHeight + insets.bottom + 50);
-      onClose && onClose();
+      if (onClose) onClose();
       Keyboard.dismiss();
     }, [translate]);
 

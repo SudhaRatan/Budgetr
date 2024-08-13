@@ -4,7 +4,7 @@ export type category = {
   id?: string;
   uid?: string;
   name: string; // user
-  type: "credit" | "debit"; // user
+  type: "Credit" | "Debit"; // user
   totalAmount: number;
   emoji?: string; // user
   color?: string; // user

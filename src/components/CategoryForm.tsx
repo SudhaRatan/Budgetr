@@ -3,6 +3,8 @@ import { TouchableOpacity, View } from "react-native";
 import {
   Button,
   Chip,
+  Divider,
+  Icon,
   Menu,
   Text,
   TextInput,
@@ -12,25 +14,63 @@ import Emojis from "unicode-emoji-json/data-ordered-emoji.json";
 import Emojiss from "emojilib";
 import { FlatList } from "react-native-gesture-handler";
 import { category } from "../types/dbTypes";
+import { useAuthStore } from "../stores/authStore";
+import { addCategory } from "../bl/dbFunctions";
 
-const CategoryForm = () => {
+interface CategoryFormPropsTypes{
+  close: any,
+  cat: category
+}
+
+const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
   const [search, setSearch] = useState("");
   const [emojis, setEmojis] = useState<string[]>();
   const [typeDropdown, setTypeDropdown] = useState(false);
   const [menuWidth, setMenuWidth] = useState(0);
 
+  const user = useAuthStore((state) => state.user);
+
+  const colors = useMemo(
+    () => [
+      "#FF6F61",
+      "#6B5B95",
+      "#88B04B",
+      "#F7CAC9",
+      "#92A8D1",
+      "#F0E68C",
+      "#034F84",
+      "#F7786B",
+      "#DEAB90",
+      "#79C753",
+    ],
+    []
+  );
+
   const theme = useTheme();
 
-  const cat: category = {
-    name: "",
-    type: "debit",
-    color: "",
-    emoji: "",
-    totalAmount: 0,
+  const generateRandomColor = () => {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    selectColor(color);
+  };
+
+  const selectColor = (color: string) => {
+    categoryDispatch({ payload: color, type: "color" });
+    setShowColors(false);
   };
 
   type IssuesAction = {
-    type: "name" | "type" | "color" | "emoji";
+    type:
+      | "name"
+      | "type"
+      | "color"
+      | "emoji"
+      | "reset"
+      | "edit"
+      | "totalAmount";
     payload: any;
   };
 
@@ -47,6 +87,12 @@ const CategoryForm = () => {
         return { ...state, color: action.payload };
       case "emoji":
         return { ...state, emoji: action.payload };
+      case "totalAmount":
+        return { ...state, totalAmount: Number(action.payload) };
+      case "reset":
+        return cat;
+      case "edit":
+        return action.payload;
       default:
         return state;
     }
@@ -56,6 +102,7 @@ const CategoryForm = () => {
 
   // extra
   const [showEmojis, setShowEmojis] = useState(false);
+  const [showColors, setShowColors] = useState(false);
 
   const keywordToEmojiMap = useMemo(() => {
     var keywordToEmojiMap: Record<string, string[]> = {};
@@ -70,12 +117,21 @@ const CategoryForm = () => {
     return keywordToEmojiMap;
   }, []);
 
-//   const getColorFromValue = useMemo((val) => {
-//     // We'll map 1-100 to 0-360 degrees (hue)
-//     const hue = Math.floor((val / 100) * 360);
-//     // Using HSL to get vibrant colors
-//     return `hsl(${hue}, 100%, 50%)`;
-//   }, []);
+  const addCategoryToFB = async () => {
+    if (category.name != "") {
+      const result = await addCategory(category, user?.uid ?? "");
+      categoryDispatch({ type: "reset", payload: "" });
+      // console.log(result);
+      close();
+    }
+  };
+
+  //   const getColorFromValue = useMemo((val) => {
+  //     // We'll map 1-100 to 0-360 degrees (hue)
+  //     const hue = Math.floor((val / 100) * 360);
+  //     // Using HSL to get vibrant colors
+  //     return `hsl(${hue}, 100%, 50%)`;
+  //   }, []);
 
   return (
     <View>
@@ -88,12 +144,15 @@ const CategoryForm = () => {
             categoryDispatch({ type: "name", payload: text })
           }
         />
-        <Text
+        <TouchableOpacity
+          activeOpacity={0.5}
           onPress={() => setTypeDropdown(true)}
           style={{
             padding: 15,
             backgroundColor: theme.colors.surfaceVariant,
             borderRadius: theme.roundness,
+            flexDirection: "row",
+            justifyContent: "space-between",
           }}
           onLayout={({
             nativeEvent: {
@@ -103,8 +162,12 @@ const CategoryForm = () => {
             setMenuWidth(width);
           }}
         >
-          {category.type ? category.type : "Select category"}
-        </Text>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <Text style={{ color: theme.colors.secondary }}>Type</Text>
+            <Text>{category.type ? category.type : "Select category"}</Text>
+          </View>
+          <Icon size={20} source={"chevron-down"} />
+        </TouchableOpacity>
         <Menu
           visible={typeDropdown}
           style={{ width: menuWidth }}
@@ -113,21 +176,29 @@ const CategoryForm = () => {
           anchorPosition="bottom"
         >
           <Menu.Item
-            title="credit"
+            title="Credit"
             onPress={() => {
-              categoryDispatch({ type: "type", payload: "credit" });
+              categoryDispatch({ type: "type", payload: "Credit" });
               setTypeDropdown(false);
             }}
           />
           <Menu.Item
-            title="debit"
+            title="Debit"
             onPress={() => {
-              categoryDispatch({ type: "type", payload: "debit" });
+              categoryDispatch({ type: "type", payload: "Debit" });
               setTypeDropdown(false);
             }}
           />
         </Menu>
-
+        <TextInput
+          value={category.totalAmount?.toString()}
+          onChangeText={(text) =>
+            categoryDispatch({ payload: text, type: "totalAmount" })
+          }
+          label="Amount"
+          placeholder="Enter initial amount"
+          keyboardType="decimal-pad"
+        />
         <View style={{ flexDirection: "row", gap: 10 }}>
           <Chip
             onPress={() => {
@@ -137,8 +208,26 @@ const CategoryForm = () => {
           >
             Select emoji <Text>{category.emoji}</Text>
           </Chip>
-          <Chip onPress={() => {}} style={{ flex: 1 }}>
-            Select color
+          <Chip
+            onPress={() => {
+              setShowColors(!showColors);
+            }}
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text>Select color{"  "}</Text>
+            <View
+              style={{
+                backgroundColor: category.color,
+                borderRadius: 30,
+                marginRight: 15,
+                width: 30,
+                height: 12,
+              }}
+            ></View>
           </Chip>
         </View>
         {showEmojis && (
@@ -154,7 +243,44 @@ const CategoryForm = () => {
             close={() => setShowEmojis(false)}
           />
         )}
-        <Button mode="contained">Add</Button>
+        {showColors && (
+          <>
+            <FlatList
+              horizontal
+              scrollEnabled
+              keyboardDismissMode="on-drag"
+              data={colors}
+              contentContainerStyle={{ gap: 20, marginBottom: 5 }}
+              keyExtractor={(i) => i}
+              renderItem={({ item }) => {
+                return (
+                  <TouchableOpacity
+                    style={{
+                      height: 30,
+                      width: 30,
+                      backgroundColor: item,
+                      borderRadius: 40,
+                    }}
+                    onPress={() => {
+                      selectColor(item);
+                    }}
+                  />
+                );
+              }}
+            />
+            <Divider />
+            <Button
+              mode="contained-tonal"
+              style={{ marginTop: 5 }}
+              onPress={generateRandomColor}
+            >
+              Set random color
+            </Button>
+          </>
+        )}
+        <Button mode="contained" onPress={addCategoryToFB}>
+          Add
+        </Button>
       </View>
     </View>
   );
@@ -205,7 +331,7 @@ const EmojiModal = ({
         mode="outlined"
         placeholder="search for more emojis"
         value={search}
-        onChangeText={setSearch}
+        onChangeText={(text) => setSearch(text.toLowerCase())}
       />
       <View>
         {loadingEmojis ? (

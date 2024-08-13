@@ -14,24 +14,16 @@ export default function AuthenticatedScreen() {
 }
 
 function AuthenticatedScreenNav() {
-  const user = useAuthStore((state) => state.user);
   const theme = useTheme();
+  const user = useAuthStore((state) => state.user);
 
-  const logout = () => {
-    if (user) {
-      firebaseAuth().signOut();
-    }
-  };
+  useEffect(() => {
+    if (user) getCategories(user.uid);
+  }, [user]);
 
   if (user == null) {
     return <Redirect href={"/sign-in"} />;
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      getCategories(user.uid);
-    }, 2000);
-  }, []);
 
   return (
     <ThemedBackground>

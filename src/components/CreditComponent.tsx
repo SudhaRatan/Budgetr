@@ -1,12 +1,18 @@
-import { Dimensions, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
-import { useState } from "react";
 import {
-  Text,
-  useTheme,
-  Icon,
-  MD3Theme,
-} from "react-native-paper";
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useState } from "react";
+import { Text, useTheme, Icon, MD3Theme } from "react-native-paper";
 import { category } from "../types/dbTypes";
+import { deleteCategory } from "../bl/dbFunctions";
+
+interface CreditComponentType extends category {
+  editPress: () => void;
+}
 
 const CreditComponent = ({
   id,
@@ -15,7 +21,8 @@ const CreditComponent = ({
   type,
   color,
   emoji,
-}: category) => {
+  editPress,
+}: CreditComponentType) => {
   const { width } = Dimensions.get("screen");
   const cardPadding = 10;
   const theme = useTheme();
@@ -98,7 +105,7 @@ const CreditComponent = ({
           </Text>
         </View>
       ) : (
-        <CreditComponentActions closeMenu={closeMenu} />
+        <CreditComponentActions categoryId={id} editPress={editPress} closeMenu={closeMenu} />
       )}
     </Pressable>
   );
@@ -106,9 +113,9 @@ const CreditComponent = ({
 
 export default CreditComponent;
 
-function CreditComponentActions({closeMenu}: any) {
-  const theme = useTheme()
-  const style = styles(theme)
+function CreditComponentActions({ closeMenu, editPress, categoryId }: any) {
+  const theme = useTheme();
+  const style = styles(theme);
   return (
     <View
       style={{
@@ -122,20 +129,33 @@ function CreditComponentActions({closeMenu}: any) {
       <TouchableOpacity style={style.action} onPress={closeMenu}>
         <Icon source="close" size={20} />
       </TouchableOpacity>
-      <TouchableOpacity style={style.action}>
+      <TouchableOpacity
+        onPress={() => {
+          editPress();
+          closeMenu();
+        }}
+        style={style.action}
+      >
         <Icon source="pencil" size={20} />
       </TouchableOpacity>
-      <TouchableOpacity style={style.action}>
+      <TouchableOpacity
+        onPress={() => {
+          deleteCategory(categoryId)
+          closeMenu();
+        }}
+        style={style.action}
+      >
         <Icon source="delete" size={20} />
       </TouchableOpacity>
     </View>
   );
 }
 
-const styles = (theme: MD3Theme) =>  StyleSheet.create({
-  action: {
-    padding: 15,
-    backgroundColor: theme.colors.background,
-    borderRadius: 100,
-  }
-})
+const styles = (theme: MD3Theme) =>
+  StyleSheet.create({
+    action: {
+      padding: 15,
+      backgroundColor: theme.colors.background,
+      borderRadius: 100,
+    },
+  });

@@ -1,29 +1,60 @@
 import { router, useRouter } from "expo-router";
 import ThemedBackground from "@/src/components/ThemedBackground";
 import { Icon, Portal, Text, useTheme } from "react-native-paper";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useDataStore } from "@/src/stores/dataStore";
 import CreditComponent from "@/src/components/CreditComponent";
 import BottomSheet from "@/src/components/BottomSheet";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import CategoryForm from "@/src/components/CategoryForm";
+import { category } from "@/src/types/dbTypes";
 
 export default function Home() {
   const theme = useTheme();
-  const [formvisible,setformvisible] = useState(false)
+  const [formvisible, setformvisible] = useState(false);
   const categories = useDataStore((state) => state.categories);
-  const { width } = Dimensions.get("screen");
+  const { width, height } = Dimensions.get("window");
   const cardPadding = 10;
   const BSRef = useRef<any>();
 
   const onCloseForm = () => {
-    setformvisible(false)
-  }
+    setformvisible(false);
+    setCategory(cat1);
+  };
+
+  const openForm = () => {
+    BSRef.current.open();
+    setformvisible(true);
+  };
+
+  const cat1 = useMemo<category>(
+    () => ({
+      name: "",
+      type: "Credit",
+      color: "#FF6F61",
+      emoji: "💵",
+      totalAmount: 0,
+    }),
+    []
+  );
+  const [cat, setCategory] = useState<category>(cat1);
 
   return (
     <ThemedBackground style={styles.container}>
       {categories ? (
-        <View style={{ gap: 60 }}>
+        <ScrollView
+          contentContainerStyle={{
+            gap: 60,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <View style={{}}>
             <Text
               variant="bodyLarge"
@@ -65,7 +96,16 @@ export default function Home() {
             }}
           >
             {categories.map((category) => {
-              return <CreditComponent key={category.id} {...category} />;
+              return (
+                <CreditComponent
+                  key={category.id}
+                  editPress={() => {
+                    setCategory(category);
+                    openForm();
+                  }}
+                  {...category}
+                />
+              );
             })}
             <View
               style={{
@@ -83,21 +123,22 @@ export default function Home() {
                   padding: 30,
                   borderRadius: 100,
                 }}
-                onPress={() => {
-                  BSRef.current.open();
-                  setformvisible(true)
-                }}
+                onPress={openForm}
               >
                 <Icon size={20} source="plus" />
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </ScrollView>
       ) : (
         <Text style={styles.title}>Loading...</Text>
       )}
       <Portal>
-        <BottomSheet onClose={onCloseForm} ref={BSRef}>{formvisible && <CategoryForm />}</BottomSheet>
+        <BottomSheet onClose={onCloseForm} ref={BSRef}>
+          {formvisible && (
+            <CategoryForm cat={cat} close={BSRef.current.close} />
+          )}
+        </BottomSheet>
       </Portal>
     </ThemedBackground>
   );
