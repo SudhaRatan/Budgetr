@@ -1,69 +1,73 @@
 import {
-  Dimensions,
+  View,
   Pressable,
+  Dimensions,
   StyleSheet,
   TouchableOpacity,
-  View,
 } from "react-native";
-import { useState } from "react";
-import { Text, useTheme, Icon, MD3Theme } from "react-native-paper";
+import React, { useState } from "react";
 import { category } from "../types/dbTypes";
+import { Icon, MD3Theme, Text, useTheme } from "react-native-paper";
 import { deleteCategory } from "../bl/dbFunctions";
 
-interface CreditComponentType extends category {
+interface DebitComponentType extends category {
   editPress: () => void;
+  onPress: () => void;
 }
 
-const CreditComponent = ({
+const DebitComponent = ({
   id,
   name,
-  totalAmount,
   type,
   color,
   emoji,
+  totalAmount,
   editPress,
-}: CreditComponentType) => {
+  onPress,
+}: DebitComponentType) => {
   const { width } = Dimensions.get("screen");
   const cardPadding = 10;
   const theme = useTheme();
 
   // menu
   const [visible, setVisible] = useState(false);
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
 
   return (
     <Pressable
       style={{
         padding: 10,
-        width: width / 2 - 1.5 * cardPadding,
-        height: width / 2 - 1.5 * cardPadding,
-        borderRadius: 10 * theme.roundness,
+        width: width / 3 - 1.5 * cardPadding,
+        borderRadius: 8 * theme.roundness,
         backgroundColor: color ?? theme.colors.primaryContainer,
-        justifyContent: "space-between",
-        paddingBottom: 30,
+        paddingBottom: 20,
         elevation: 1,
+        gap: 10,
       }}
-      onPress={openMenu}
+      onLongPress={() => setVisible(!visible)}
+      onPress={() => {
+        onPress();
+        setVisible(false);
+      }}
     >
       <View
         style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
+          alignItems: "flex-start",
         }}
       >
         <Text
           variant="titleMedium"
           style={{
             backgroundColor: theme.colors.surface,
-            padding: 20,
+            padding: 15,
             borderRadius: 100,
             color: theme.dark ? theme.colors.background : "",
+            textAlign: "left",
           }}
         >
           {emoji}
         </Text>
+      </View>
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
         <Text
           style={{
             fontFamily: "monospace",
@@ -74,50 +78,52 @@ const CreditComponent = ({
         >
           {name}
         </Text>
+        {!visible ? (
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              variant="bodyLarge"
+              style={{
+                color: theme.dark
+                  ? theme.colors.surfaceVariant
+                  : theme.colors.onSurfaceDisabled,
+                fontWeight: "bold",
+              }}
+            >
+              &#8377;{" "}
+            </Text>
+            <Text
+              variant="bodyLarge"
+              style={{
+                fontWeight: "bold",
+                textAlign: "center",
+                fontFamily: "monospace",
+                color: theme.dark ? theme.colors.background : "",
+              }}
+            >
+              {totalAmount}
+            </Text>
+          </View>
+        ) : (
+          <CreditComponentActions
+            categoryId={id}
+            editPress={editPress}
+            closeMenu={() => {
+              setVisible(false);
+            }}
+          />
+        )}
       </View>
-      {!visible ? (
-        <View
-          style={{
-            alignItems: "center",
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            variant="headlineSmall"
-            style={{
-              color: theme.dark
-                ? theme.colors.surfaceVariant
-                : theme.colors.onSurfaceDisabled,
-              fontWeight: "bold",
-            }}
-          >
-            &#8377;{" "}
-          </Text>
-          <Text
-            variant="headlineLarge"
-            style={{
-              fontWeight: "bold",
-              textAlign: "center",
-              fontFamily: "monospace",
-              color: theme.dark ? theme.colors.background : "",
-            }}
-          >
-            {totalAmount}
-          </Text>
-        </View>
-      ) : (
-        <CreditComponentActions
-          categoryId={id}
-          editPress={editPress}
-          closeMenu={closeMenu}
-        />
-      )}
     </Pressable>
   );
 };
 
-export default CreditComponent;
+export default DebitComponent;
 
 function CreditComponentActions({ closeMenu, editPress, categoryId }: any) {
   const theme = useTheme();
@@ -132,9 +138,6 @@ function CreditComponentActions({ closeMenu, editPress, categoryId }: any) {
         gap: 10,
       }}
     >
-      <TouchableOpacity style={style.action} onPress={closeMenu}>
-        <Icon source="close" size={20} />
-      </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
           editPress();
@@ -142,7 +145,7 @@ function CreditComponentActions({ closeMenu, editPress, categoryId }: any) {
         }}
         style={style.action}
       >
-        <Icon source="pencil" size={20} />
+        <Icon source="pencil" size={15} />
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
@@ -151,7 +154,7 @@ function CreditComponentActions({ closeMenu, editPress, categoryId }: any) {
         }}
         style={style.action}
       >
-        <Icon source="delete" size={20} />
+        <Icon source="delete" size={15} />
       </TouchableOpacity>
     </View>
   );
@@ -160,7 +163,7 @@ function CreditComponentActions({ closeMenu, editPress, categoryId }: any) {
 const styles = (theme: MD3Theme) =>
   StyleSheet.create({
     action: {
-      padding: 15,
+      padding: 5,
       backgroundColor: theme.colors.background,
       borderRadius: 100,
     },

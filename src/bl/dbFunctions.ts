@@ -1,17 +1,23 @@
 import {
   createCategory,
   deleteCategoryDB,
-  getCategories as GC,
+  getCreditCategories as GCC,
+  getDebitCategories as GDC,
 } from "../db/firestoreDB";
 import { useDataStore } from "../stores/dataStore";
 import { category } from "../types/dbTypes";
 import { returnDataType } from "../types/returnData";
 
 const setCategories = useDataStore.getState().setCategories;
+const setDebitCategories = useDataStore.getState().setDebitCategories;
 
-export const getCategories = async (uid: string) => {
-  GC(uid, setCategories);
+export const getCreditCategories = async (uid: string) => {
+  GCC(uid, setCategories);
 };
+
+export const getDebitCategories = async(uid: string) => {
+  GDC(uid, setDebitCategories)
+}
 
 export const addCategory = async (
   category: category,

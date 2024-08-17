@@ -1,29 +1,129 @@
-import ThemedBackground from '@/src/components/ThemedBackground';
-import { StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import BottomSheet from "@/src/components/BottomSheet";
+import CategoryForm from "@/src/components/CategoryForm";
+import DebitComponent from "@/src/components/DebitComponent";
+import ExpensesDonutChart from "@/src/components/ExpensesDonutChart";
+import ThemedBackground from "@/src/components/ThemedBackground";
+import TransactionForm from "@/src/components/TransactionForm";
+import { useDataStore } from "@/src/stores/dataStore";
+import { category } from "@/src/types/dbTypes";
+import { useMemo, useRef, useState } from "react";
+import { Dimensions, ScrollView, TouchableOpacity, View } from "react-native";
+import { Icon, Portal, Text, useTheme } from "react-native-paper";
 
 export default function Categories() {
+  const { width } = Dimensions.get("screen");
+  const cardPadding = 10;
+  const theme = useTheme();
+  const BSRef = useRef<any>();
+  const BSRef2 = useRef<any>();
+
+  const [formvisible, setformvisible] = useState(false);
+
+  const debitCategories = useDataStore((state) => state.debitCategories);
+
+  const [passedCategory, setPassedCategory] = useState<category>();
+
+  const onCloseForm = () => {
+    setformvisible(false);
+    setCategory(cat1);
+  };
+
+  const openForm = () => {
+    BSRef.current.open();
+    setformvisible(true);
+  };
+
+  const onCloseTransactionForm = () => {};
+
+  const openTransactionForm = () => {
+    BSRef2.current.open();
+  };
+
+  const cat1 = useMemo<category>(
+    () => ({
+      name: "",
+      type: "Debit",
+      color: "#FF6F61",
+      emoji: "💵",
+      totalAmount: 0,
+    }),
+    []
+  );
+  const [cat, setCategory] = useState<category>(cat1);
+
   return (
-    <ThemedBackground style={styles.container}>
-      <Text style={styles.title}>Categories page</Text>
-      <View style={styles.separator} />
+    <ThemedBackground style={{ flex: 1 }}>
+      <ScrollView
+        contentContainerStyle={{
+          alignItems: "center",
+          // maxHeight: height,
+        }}
+      >
+        <ExpensesDonutChart data={debitCategories!} />
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            padding: cardPadding,
+            gap: cardPadding,
+          }}
+        >
+          {debitCategories?.map((category) => {
+            return (
+              <DebitComponent
+                key={category.id}
+                editPress={() => {
+                  setCategory(category);
+                  openForm();
+                }}
+                onPress={() => {
+                  openTransactionForm();
+                  setPassedCategory(category)
+                }}
+                {...category}
+              />
+            );
+          })}
+          <View
+            style={{
+              padding: 10,
+              width: width / 3 - 1.5 * cardPadding,
+              height: width / 3 - 1.5 * cardPadding,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={{
+                backgroundColor: theme.colors.inverseOnSurface,
+                padding: 30,
+                borderRadius: 100,
+              }}
+              onPress={() => {
+                openForm();
+              }}
+            >
+              <Icon size={20} source="plus" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+      <Portal>
+        <BottomSheet onClose={onCloseForm} ref={BSRef}>
+          {formvisible && (
+            <CategoryForm cat={cat} close={BSRef.current.close} />
+          )}
+        </BottomSheet>
+        <BottomSheet onClose={() => {}} ref={BSRef2}>
+          <TransactionForm
+            categoryToPass={passedCategory!}
+            closeForm={() => {
+              BSRef2.current.close();
+            }}
+          />
+        </BottomSheet>
+      </Portal>
     </ThemedBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});

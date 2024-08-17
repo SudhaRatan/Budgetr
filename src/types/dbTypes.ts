@@ -13,7 +13,8 @@ export type category = {
 export type transaction = {
   id?: string;
   uid: string;
-  categoryId: string; // user
+  categoryFromId: string; // user
+  categoryToId: string; // user
   subcategory: string; // user
   amount: number; // user
   createdOn: Timestamp;

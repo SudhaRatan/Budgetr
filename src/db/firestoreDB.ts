@@ -4,17 +4,37 @@ import { returnDataType } from "../types/returnData";
 
 const _firestore = firestore();
 
-export const getCategories = (
+export const getCreditCategories = (
   uid: string,
   setCategories: (categories: any) => void
 ) => {
   _firestore
     .collection("categories")
     .where(Filter.and(Filter("uid", "==", uid), Filter("type", "==", "Credit")))
-    .orderBy('createdOn',"desc")
+    .orderBy("createdOn", "desc")
     .onSnapshot(
       (querySnapShot) => {
         setCategories(
+          querySnapShot.docs.map((i) => ({ id: i.id, ...i.data() }))
+        );
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+};
+
+export const getDebitCategories = (
+  uid: string,
+  setDebitCategories: (categories: any) => void
+) => {
+  _firestore
+    .collection("categories")
+    .where(Filter.and(Filter("uid", "==", uid), Filter("type", "==", "Debit")))
+    .orderBy("createdOn", "desc")
+    .onSnapshot(
+      (querySnapShot) => {
+        setDebitCategories(
           querySnapShot.docs.map((i) => ({ id: i.id, ...i.data() }))
         );
       },
@@ -29,6 +49,7 @@ export const createCategory = async (
   uid: string
 ): Promise<returnDataType> => {
   try {
+    if (category.totalAmount === undefined) category.totalAmount = 0;
     if (category.id) {
       await _firestore
         .collection("categories")

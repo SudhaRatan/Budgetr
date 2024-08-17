@@ -2,12 +2,12 @@ import CustomHeader from "@/src/components/CustomHeader";
 import ThemedBackground from "@/src/components/ThemedBackground";
 import { useAuthStore } from "@/src/stores/authStore";
 import { Redirect, Tabs } from "expo-router";
-import { firebaseAuth } from "../_layout";
 import { useTheme } from "react-native-paper";
 import TabIcon from "@/src/components/TabIcon";
 import TabLabel from "@/src/components/TabLabel";
 import { useEffect } from "react";
-import { getCategories } from "@/src/bl/dbFunctions";
+import { getCreditCategories, getDebitCategories } from "@/src/bl/dbFunctions";
+import { useDataStore } from "@/src/stores/dataStore";
 
 export default function AuthenticatedScreen() {
   return <AuthenticatedScreenNav />;
@@ -16,9 +16,19 @@ export default function AuthenticatedScreen() {
 function AuthenticatedScreenNav() {
   const theme = useTheme();
   const user = useAuthStore((state) => state.user);
+  const setCategories = useDataStore((state) => state.setCategories);
+  const setDebitCategories = useDataStore((state) => state.setDebitCategories);
 
   useEffect(() => {
-    if (user) getCategories(user.uid);
+    if (user) {
+      getCreditCategories(user.uid);
+      getDebitCategories(user.uid);
+    }
+
+    return () => {
+      setCategories(null);
+      setDebitCategories(null);
+    };
   }, [user]);
 
   if (user == null) {
@@ -75,7 +85,7 @@ function AuthenticatedScreenNav() {
         <Tabs.Screen
           name="categories"
           options={{
-            header: (props) => <CustomHeader title="Two" {...props} />,
+            header: (props) => <CustomHeader title="Categories" {...props} />,
             tabBarIcon: (props) => (
               <TabIcon
                 focusedSource="view-grid"

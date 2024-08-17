@@ -88,7 +88,7 @@ const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
       case "emoji":
         return { ...state, emoji: action.payload };
       case "totalAmount":
-        return { ...state, totalAmount: Number(action.payload) };
+        return { ...state, totalAmount: action.payload != "" ? Number(action.payload) : 0 };
       case "reset":
         return cat;
       case "edit":
@@ -191,7 +191,7 @@ const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
           />
         </Menu>
         <TextInput
-          value={category.totalAmount?.toString()}
+          value={category.totalAmount != 0 ? category.totalAmount?.toString() : ""}
           onChangeText={(text) =>
             categoryDispatch({ payload: text, type: "totalAmount" })
           }

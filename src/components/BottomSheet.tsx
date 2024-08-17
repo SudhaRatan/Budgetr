@@ -5,10 +5,12 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Keyboard,
+  BackHandler,
 } from "react-native";
 import React, {
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useState,
 } from "react";
@@ -16,7 +18,6 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   Extrapolation,
   interpolate,
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -27,7 +28,14 @@ import { useTheme } from "react-native-paper";
 
 const BottomSheet = forwardRef(
   ({ children, className, style, onClose }: any, ref) => {
+    useEffect(() => {
+      const bh = BackHandler.addEventListener("hardwareBackPress", () => {
+        close();
+        return true;
+      });
 
+      return () => bh.remove();
+    });
     const insets = useSafeAreaInsets();
 
     const [bottomBarHeight, setBottomBarHeight] = useState(1000);

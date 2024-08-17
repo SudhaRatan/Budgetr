@@ -14,6 +14,7 @@ import BottomSheet from "@/src/components/BottomSheet";
 import { useMemo, useRef, useState } from "react";
 import CategoryForm from "@/src/components/CategoryForm";
 import { category } from "@/src/types/dbTypes";
+import AnimatedText from "@/src/components/AnimatedText";
 
 export default function Home() {
   const theme = useTheme();
@@ -71,20 +72,17 @@ export default function Home() {
                 flexDirection: "row",
               }}
             >
-              <Text
-                variant="headlineLarge"
-                style={{
-                  color: theme.colors.onSurfaceDisabled,
-                  fontWeight: "bold",
-                }}
-              >
-                &#8377;{" "}
-              </Text>
-              <Text variant="displayMedium" style={{ fontWeight: "bold" }}>
-                {categories
+              <Text variant="headlineLarge">&#8377; </Text>
+              <AnimatedText
+                initialValue={0}
+                actualValue={categories
                   .map((category) => category.totalAmount)
                   .reduce((ac, x) => ac + x, 0)}
-              </Text>
+                style={{
+                  fontWeight: "bold",
+                }}
+                variant="displayMedium"
+              />
             </View>
           </View>
           <View
