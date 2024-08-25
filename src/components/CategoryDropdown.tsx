@@ -23,6 +23,7 @@ type DropdownTypes = {
   listItems: listItemsTypes[];
   listIcons?: listIconsTypes[];
   style?: ViewStyle[];
+  parentStyles?: ViewStyle,
   itemOnPress: (id: string) => void;
 };
 
@@ -31,6 +32,7 @@ const CategoryDropdown = ({
   listItems,
   listIcons,
   style,
+  parentStyles,
   itemOnPress,
 }: DropdownTypes) => {
   const [toggle, setToggle] = useState<boolean>(false);
@@ -54,9 +56,9 @@ const CategoryDropdown = ({
         setDim(e.nativeEvent.layout);
       }}
     >
-      <TouchableOpacity onPress={openMenu}>{parent}</TouchableOpacity>
+      <TouchableOpacity style={parentStyles} onPress={openMenu}>{parent}</TouchableOpacity>
       <Menu
-        style={{ transform: [{ translateY: dim!.height + 10 }] }}
+        style={{ transform: [{ translateY: dim!.height }] }}
         visible={toggle}
         onDismiss={closeMenu}
         anchor={

@@ -1,5 +1,9 @@
-import firestore, { Filter, Timestamp } from "@react-native-firebase/firestore";
-import { category } from "../types/dbTypes";
+import firestore, {
+  Filter,
+  firebase,
+  Timestamp,
+} from "@react-native-firebase/firestore";
+import { category, transaction } from "../types/dbTypes";
 import { returnDataType } from "../types/returnData";
 
 const _firestore = firestore();
@@ -80,4 +84,28 @@ export const deleteCategoryDB = async (categoryId: string) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const createTransaction = async (
+  uid: string,
+  transaction: transaction
+) => {
+  try {
+    await _firestore
+      .collection("categories")
+      .doc(transaction.categoryFromId)
+      .update({
+        totalAmount: firebase.firestore.FieldValue.increment(
+          -transaction.amount
+        ),
+      });
+    await _firestore
+      .collection("categories")
+      .doc(transaction.categoryToId)
+      .update({
+        totalAmount: firebase.firestore.FieldValue.increment(
+          transaction.amount
+        ),
+      });
+  } catch (error) {}
 };

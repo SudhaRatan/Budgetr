@@ -15,7 +15,7 @@ export type transaction = {
   uid: string;
   categoryFromId: string; // user
   categoryToId: string; // user
-  subcategory: string; // user
+  subcategory?: string; // user
   amount: number; // user
-  createdOn: Timestamp;
+  createdOn?: Timestamp;
 };

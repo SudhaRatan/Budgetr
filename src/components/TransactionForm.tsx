@@ -16,6 +16,8 @@ import { ScrollView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import PressableWithBorder from "./PressableWithBorder";
 import CategoryDropdown from "./CategoryDropdown";
+import { createTransaction } from "../db/firestoreDB";
+import { useAuthStore } from "../stores/authStore";
 
 interface TransactionFormType {
   categoryToPass: category;
@@ -26,6 +28,7 @@ const TransactionForm = ({
   categoryToPass,
   closeForm,
 }: TransactionFormType) => {
+  const user = useAuthStore(state => state.user)
   const theme = useTheme();
   const { width, height } = Dimensions.get("screen");
   const categories = useDataStore((state) => state.categories);
@@ -41,16 +44,17 @@ const TransactionForm = ({
   const [subCategory, setSubCategory] = useState<string>("");
 
   const setCategoryFromObj = (id: string) => {
-    setCategoryFrom(categories!.find(c => c.id === id)!)
+    setCategoryFrom(categories!.find((c) => c.id === id)!);
   };
 
   const setCategoryToObj = (id: string) => {
-    setCategoryTo(debitCategories!.find(c => c.id === id)!)
+    setCategoryTo(debitCategories!.find((c) => c.id === id)!);
   };
   const keyWidth = containerWidth / 4 - 2;
   const style = styles(theme, keyWidth, height);
 
   const addTransaction = () => {
+    createTransaction(user!.uid, {amount: Number(amount), categoryFromId: categoryFrom.id!, categoryToId: categoryTo.id!, uid: user?.uid!} )
     setAmount("");
     closeForm();
   };
@@ -157,6 +161,7 @@ const TransactionForm = ({
       </View>
       <TextInput
         placeholder="Add note..."
+        multiline={false}
         placeholderTextColor={theme.colors.secondary}
         style={{
           alignSelf: "center",
@@ -358,6 +363,8 @@ const styles = (theme: MD3Theme, keyWidth: number, screenHeight: number) =>
       marginTop: 15,
     },
     categoryDropdown: {
+      overflow: "hidden",
+      borderRadius: 100,
       flexDirection: "row",
       flex: 1,
       justifyContent: "space-between",
@@ -365,7 +372,6 @@ const styles = (theme: MD3Theme, keyWidth: number, screenHeight: number) =>
       backgroundColor: theme.colors.primaryContainer,
       paddingHorizontal: 15,
       paddingVertical: 10,
-      borderRadius: 100,
     },
     categoryDropdownInner: {
       flexDirection: "row",
