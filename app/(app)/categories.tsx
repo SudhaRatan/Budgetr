@@ -53,62 +53,63 @@ export default function Categories() {
 
   return (
     <ThemedBackground style={{ flex: 1 }}>
-      <ScrollView
-        contentContainerStyle={{
-          alignItems: "center",
-          // maxHeight: height,
-        }}
-      >
-        <ExpensesDonutChart data={debitCategories!} />
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            padding: cardPadding,
-            gap: cardPadding,
+      {debitCategories ? (
+        <ScrollView
+          contentContainerStyle={{
+            alignItems: "center",
           }}
         >
-          {debitCategories?.map((category) => {
-            return (
-              <DebitComponent
-                key={category.id}
-                editPress={() => {
-                  setCategory(category);
-                  openForm();
-                }}
-                onPress={() => {
-                  openTransactionForm();
-                  setPassedCategory(category)
-                }}
-                {...category}
-              />
-            );
-          })}
+          <ExpensesDonutChart data={debitCategories} />
           <View
             style={{
-              padding: 10,
-              width: width / 3 - 1.5 * cardPadding,
-              height: width / 3 - 1.5 * cardPadding,
-              justifyContent: "center",
-              alignItems: "center",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              padding: cardPadding,
+              gap: cardPadding,
             }}
           >
-            <TouchableOpacity
-              activeOpacity={0.5}
+            {debitCategories?.map((category) => {
+              return (
+                <DebitComponent
+                  key={category.id}
+                  editPress={() => {
+                    setCategory(category);
+                    openForm();
+                  }}
+                  onPress={() => {
+                    openTransactionForm();
+                    setPassedCategory(category);
+                  }}
+                  {...category}
+                />
+              );
+            })}
+            <View
               style={{
-                backgroundColor: theme.colors.inverseOnSurface,
-                padding: 30,
-                borderRadius: 100,
-              }}
-              onPress={() => {
-                openForm();
+                padding: 10,
+                width: width / 3 - 1.5 * cardPadding,
+                height: width / 3 - 1.5 * cardPadding,
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <Icon size={20} source="plus" />
-            </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                style={{
+                  backgroundColor: theme.colors.inverseOnSurface,
+                  padding: 30,
+                  borderRadius: 100,
+                }}
+                onPress={() => {
+                  openForm();
+                }}
+              >
+                <Icon size={20} source="plus" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      ) : null}
       <Portal>
         <BottomSheet onClose={onCloseForm} ref={BSRef}>
           {formvisible && (

@@ -14,6 +14,8 @@ import { useDataStore } from "../stores/dataStore";
 import BlinkingCursor from "./BlinkingCursor";
 import { ScrollView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
+import PressableWithBorder from "./PressableWithBorder";
+import CategoryDropdown from "./CategoryDropdown";
 
 interface TransactionFormType {
   categoryToPass: category;
@@ -38,9 +40,13 @@ const TransactionForm = ({
   const [amount, setAmount] = useState<string>("");
   const [subCategory, setSubCategory] = useState<string>("");
 
-  const setCategoryFromObj = () => {};
+  const setCategoryFromObj = (id: string) => {
+    setCategoryFrom(categories!.find(c => c.id === id)!)
+  };
 
-  const setCategoryToObj = () => {};
+  const setCategoryToObj = (id: string) => {
+    setCategoryTo(debitCategories!.find(c => c.id === id)!)
+  };
   const keyWidth = containerWidth / 4 - 2;
   const style = styles(theme, keyWidth, height);
 
@@ -87,39 +93,46 @@ const TransactionForm = ({
         if (!containerWidth) setContainerWidth(width);
       }}
     >
+      {/* Category dropwowns */}
       <View style={style.categoryDropdownCont}>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={() => {
-            setCategoryFromObj();
-          }}
-          style={[
-            style.categoryDropdown,
-            { backgroundColor: categoryFrom.color },
-          ]}
-        >
-          <View style={style.categoryDropdownInner}>
-            <Text>{categoryFrom?.emoji}</Text>
-            <Text>{categoryFrom?.name}</Text>
-          </View>
-          <Icon size={20} source={"chevron-down"} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={() => {
-            setCategoryToObj();
-          }}
-          style={[
-            style.categoryDropdown,
-            { backgroundColor: categoryTo?.color },
-          ]}
-        >
-          <View style={style.categoryDropdownInner}>
-            <Text>{categoryTo?.emoji}</Text>
-            <Text>{categoryTo?.name}</Text>
-          </View>
-          <Icon size={20} source={"chevron-down"} />
-        </TouchableOpacity>
+        <CategoryDropdown
+          listItems={categories!.map((c) => ({ id: c.id, title: c.name }))}
+          listIcons={categories!.map((c) => ({ id: c.id, src: c.emoji }))}
+          itemOnPress={setCategoryFromObj}
+          parent={
+            <View
+              style={[
+                style.categoryDropdown,
+                { backgroundColor: categoryFrom.color },
+              ]}
+            >
+              <View style={style.categoryDropdownInner}>
+                <Text>{categoryFrom?.emoji}</Text>
+                <Text>{categoryFrom?.name}</Text>
+              </View>
+              <Icon size={20} source={"chevron-down"} />
+            </View>
+          }
+        />
+        <CategoryDropdown
+          listItems={debitCategories!.map((c) => ({ id: c.id, title: c.name }))}
+          listIcons={debitCategories!.map((c) => ({ id: c.id, src: c.emoji }))}
+          itemOnPress={setCategoryToObj}
+          parent={
+            <View
+              style={[
+                style.categoryDropdown,
+                { backgroundColor: categoryTo?.color },
+              ]}
+            >
+              <View style={style.categoryDropdownInner}>
+                <Text>{categoryTo?.emoji}</Text>
+                <Text>{categoryTo?.name}</Text>
+              </View>
+              <Icon size={20} source={"chevron-down"} />
+            </View>
+          }
+        />
       </View>
       <Text style={{ textAlign: "center", color: theme.colors.secondary }}>
         Expenses
@@ -156,108 +169,120 @@ const TransactionForm = ({
           <View
             style={{ flexDirection: "row", flexWrap: "wrap", gap: 2, flex: 3 }}
           >
-            <TouchableOpacity
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "1");
               }}
             >
               <Text style={style.keyCapText}>1</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "2");
               }}
             >
               <Text style={style.keyCapText}>2</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "3");
               }}
             >
               <Text style={style.keyCapText}>3</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "4");
               }}
             >
               <Text style={style.keyCapText}>4</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "5");
               }}
             >
               <Text style={style.keyCapText}>5</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "6");
               }}
             >
               <Text style={style.keyCapText}>6</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "7");
               }}
             >
               <Text style={style.keyCapText}>7</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "8");
               }}
             >
               <Text style={style.keyCapText}>8</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "9");
               }}
             >
               <Text style={style.keyCapText}>9</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => setAmount("")}
             >
               <Text style={style.keyCapText}>C</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
               style={style.keyCap}
+              ContainerStyle={style.keyCap}
               onPress={() => {
                 setAmount((prev) => prev + "0");
               }}
             >
               <Text style={style.keyCapText}>0</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                style.customKey,
-                {
-                  height: keyWidth,
-                  backgroundColor: theme.colors.primaryContainer,
-                },
-              ]}
+            </PressableWithBorder>
+            <PressableWithBorder
+              style={style.keyCap}
+              ContainerStyle={style.keyCap}
+              onPress={() => {
+                if (!amount.includes(".") && amount.length > 0) {
+                  setAmount((prev) => prev + ".");
+                }
+              }}
             >
-              <Icon size={24} source={"qrcode-scan"} />
-            </TouchableOpacity>
+              <Text style={style.keyCapText}>.</Text>
+            </PressableWithBorder>
           </View>
           <View
             style={{ flexDirection: "row", flexWrap: "wrap", gap: 2, flex: 1 }}
           >
-            <TouchableOpacity
+            <PressableWithBorder
+              ContainerStyle={style.keyCap}
               style={[
                 style.customKey,
                 {
@@ -270,8 +295,9 @@ const TransactionForm = ({
               }}
             >
               <Icon size={24} source={"backspace-outline"} />
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
+              ContainerStyle={style.keyCap}
               style={[
                 style.customKey,
                 {
@@ -281,12 +307,25 @@ const TransactionForm = ({
               ]}
             >
               <Icon size={24} source={"calendar-month-outline"} />
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableWithBorder>
+            <PressableWithBorder
+              ContainerStyle={style.keyCap}
               style={[
                 style.customKey,
                 {
-                  height: keyWidth * 2,
+                  height: keyWidth,
+                  backgroundColor: theme.colors.primaryContainer,
+                },
+              ]}
+            >
+              <Icon size={24} source={"qrcode-scan"} />
+            </PressableWithBorder>
+            <PressableWithBorder
+              ContainerStyle={style.keyCap}
+              style={[
+                style.customKey,
+                {
+                  height: keyWidth,
                   backgroundColor: theme.colors.onSurface,
                 },
               ]}
@@ -297,7 +336,7 @@ const TransactionForm = ({
                 source={"check"}
                 color={theme.colors.secondaryContainer}
               />
-            </TouchableOpacity>
+            </PressableWithBorder>
           </View>
         </View>
       )}
@@ -326,7 +365,7 @@ const styles = (theme: MD3Theme, keyWidth: number, screenHeight: number) =>
       backgroundColor: theme.colors.primaryContainer,
       paddingHorizontal: 15,
       paddingVertical: 10,
-      borderRadius: 40,
+      borderRadius: 100,
     },
     categoryDropdownInner: {
       flexDirection: "row",
