@@ -41,6 +41,9 @@ const CategoryScreenHeader = ({
         elevation: 2,
       }}
     >
+      <Text variant="titleLarge" style={{ textAlign: "center", fontWeight:"bold" }}>
+        Expenses
+      </Text>
       <View style={{ flexDirection: "row", gap: 10, padding: 5 }}>
         <SegmentedControl
           values={["Categories", "Transactions"]}
@@ -48,9 +51,13 @@ const CategoryScreenHeader = ({
           backgroundColor={theme.colors.surfaceDisabled}
           tintColor={theme.colors.primary}
           onChange={({ nativeEvent: { selectedSegmentIndex } }) => {
-            setToggleType(selectedSegmentIndex === 0 ? "Categories" : "Transactions");
+            setToggleType(
+              selectedSegmentIndex === 0 ? "Categories" : "Transactions"
+            );
           }}
           style={{ flex: 2, alignItems: "center" }}
+          activeFontStyle={{color: theme.colors.background}}
+          fontStyle={{color: theme.colors.onSurfaceVariant}}
         />
         <CategoryDropdown
           parentStyles={{ flex: 1, alignSelf: "center" }}

@@ -3,12 +3,19 @@ import CategoryForm from "@/src/components/CategoryForm";
 import DebitComponent from "@/src/components/DebitComponent";
 import ExpensesDonutChart from "@/src/components/ExpensesDonutChart";
 import ThemedBackground from "@/src/components/ThemedBackground";
+import TransactionCard from "@/src/components/TransactionCard";
 import TransactionForm from "@/src/components/TransactionForm";
 import { useDataStore } from "@/src/stores/dataStore";
 import { usePrefereneStore } from "@/src/stores/preferencesStore";
 import { category } from "@/src/types/dbTypes";
 import { useMemo, useRef, useState } from "react";
-import { Dimensions, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Icon, Portal, Text, useTheme } from "react-native-paper";
 
 export default function Categories() {
@@ -23,6 +30,9 @@ export default function Categories() {
   const toggleType = usePrefereneStore((state) => state.toggleType);
 
   const debitCategories = useDataStore((state) => state.debitCategories);
+  const categories = useDataStore((state) => state.categories);
+
+  const transactions = useDataStore((state) => state.transactions);
 
   const [passedCategory, setPassedCategory] = useState<category>();
 
@@ -57,6 +67,7 @@ export default function Categories() {
   return (
     <ThemedBackground style={{ flex: 1 }}>
       {toggleType === "Categories" ? (
+        // categories
         debitCategories ? (
           <ScrollView
             contentContainerStyle={{
@@ -114,6 +125,30 @@ export default function Categories() {
             </View>
           </ScrollView>
         ) : null
+      ) : transactions ? (
+        <View>
+          <FlatList
+          onScroll={({nativeEvent:{contentOffset}}) => {
+            console.log(contentOffset.y)
+          }}
+            data={transactions}
+            contentContainerStyle={{ gap: 15, padding: 10 }}
+            keyExtractor={(i, index) => i.id!}
+            renderItem={({ item, index }) => {
+              return (
+                <TransactionCard
+                  categoryDetails={
+                    debitCategories?.find((i) => i.id === item.categoryToId)!
+                  }
+                  ccDetails={
+                    categories?.find((i) => i.id === item.categoryFromId)!
+                  }
+                  {...item}
+                />
+              );
+            }}
+          />
+        </View>
       ) : null}
       <Portal>
         <BottomSheet onClose={onCloseForm} ref={BSRef}>

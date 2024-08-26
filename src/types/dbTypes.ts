@@ -17,5 +17,6 @@ export type transaction = {
   categoryToId: string; // user
   subcategory?: string; // user
   amount: number; // user
+  type: "Credit" | "Debit"; // user
   createdOn?: Timestamp;
 };

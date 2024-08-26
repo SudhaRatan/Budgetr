@@ -59,7 +59,7 @@ const TransactionForm = ({
       ToastAndroid.show("Enter amount",ToastAndroid.SHORT)
       return
     }
-    addTransaction({amount: Number(amount), categoryFromId: categoryFrom.id!, categoryToId: categoryTo.id!, uid: user?.uid!, subcategory: subCategory}, user!.uid )
+    addTransaction({amount: Number(amount),type: "Debit", categoryFromId: categoryFrom.id!, categoryToId: categoryTo.id!, uid: user?.uid!, subcategory: subCategory}, user!.uid )
     setAmount("");
     setSubCategory("")
     closeForm();

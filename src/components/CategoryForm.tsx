@@ -17,9 +17,9 @@ import { category } from "../types/dbTypes";
 import { useAuthStore } from "../stores/authStore";
 import { addCategory } from "../bl/dbFunctions";
 
-interface CategoryFormPropsTypes{
-  close: any,
-  cat: category
+interface CategoryFormPropsTypes {
+  close: any;
+  cat: category;
 }
 
 const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
@@ -88,7 +88,10 @@ const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
       case "emoji":
         return { ...state, emoji: action.payload };
       case "totalAmount":
-        return { ...state, totalAmount: action.payload != "" ? Number(action.payload) : 0 };
+        return {
+          ...state,
+          totalAmount: action.payload != "" ? Number(action.payload) : 0,
+        };
       case "reset":
         return cat;
       case "edit":
@@ -164,7 +167,13 @@ const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
         >
           <View style={{ flexDirection: "row", gap: 10 }}>
             <Text style={{ color: theme.colors.secondary }}>Type</Text>
-            <Text>{category.type ? category.type : "Select category"}</Text>
+            <Text>
+              {category.type
+                ? category.type === "Debit"
+                  ? "Expense"
+                  : "Income"
+                : "Select category"}
+            </Text>
           </View>
           <Icon size={20} source={"chevron-down"} />
         </TouchableOpacity>
@@ -176,14 +185,14 @@ const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
           anchorPosition="bottom"
         >
           <Menu.Item
-            title="Credit"
+            title="Income"
             onPress={() => {
               categoryDispatch({ type: "type", payload: "Credit" });
               setTypeDropdown(false);
             }}
           />
           <Menu.Item
-            title="Debit"
+            title="Expense"
             onPress={() => {
               categoryDispatch({ type: "type", payload: "Debit" });
               setTypeDropdown(false);
@@ -191,7 +200,9 @@ const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
           />
         </Menu>
         <TextInput
-          value={category.totalAmount != 0 ? category.totalAmount?.toString() : ""}
+          value={
+            category.totalAmount != 0 ? category.totalAmount?.toString() : ""
+          }
           onChangeText={(text) =>
             categoryDispatch({ payload: text, type: "totalAmount" })
           }
