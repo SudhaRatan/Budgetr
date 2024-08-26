@@ -8,6 +8,7 @@ import TabLabel from "@/src/components/TabLabel";
 import { useEffect } from "react";
 import { getCreditCategories, getDebitCategories } from "@/src/bl/dbFunctions";
 import { useDataStore } from "@/src/stores/dataStore";
+import CategoryScreenHeader from "@/src/components/CategoryScreenHeader";
 
 export default function AuthenticatedScreen() {
   return <AuthenticatedScreenNav />;
@@ -85,7 +86,7 @@ function AuthenticatedScreenNav() {
         <Tabs.Screen
           name="categories"
           options={{
-            header: (props) => <CustomHeader title="Categories" {...props} />,
+            header: (props) => <CategoryScreenHeader {...props} />,
             tabBarIcon: (props) => (
               <TabIcon
                 focusedSource="view-grid"

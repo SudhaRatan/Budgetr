@@ -4,6 +4,7 @@ import {
   Pressable,
   StyleSheet,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -16,8 +17,8 @@ import { ScrollView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import PressableWithBorder from "./PressableWithBorder";
 import CategoryDropdown from "./CategoryDropdown";
-import { createTransaction } from "../db/firestoreDB";
 import { useAuthStore } from "../stores/authStore";
+import { addTransaction } from "../bl/dbFunctions";
 
 interface TransactionFormType {
   categoryToPass: category;
@@ -53,9 +54,14 @@ const TransactionForm = ({
   const keyWidth = containerWidth / 4 - 2;
   const style = styles(theme, keyWidth, height);
 
-  const addTransaction = () => {
-    createTransaction(user!.uid, {amount: Number(amount), categoryFromId: categoryFrom.id!, categoryToId: categoryTo.id!, uid: user?.uid!} )
+  const AddTransaction = () => {
+    if(amount == "" || Number(amount) == 0) {
+      ToastAndroid.show("Enter amount",ToastAndroid.SHORT)
+      return
+    }
+    addTransaction({amount: Number(amount), categoryFromId: categoryFrom.id!, categoryToId: categoryTo.id!, uid: user?.uid!, subcategory: subCategory}, user!.uid )
     setAmount("");
+    setSubCategory("")
     closeForm();
   };
 
@@ -163,6 +169,8 @@ const TransactionForm = ({
         placeholder="Add note..."
         multiline={false}
         placeholderTextColor={theme.colors.secondary}
+        value={subCategory}
+        onChangeText={setSubCategory}
         style={{
           alignSelf: "center",
           color: theme.colors.onSurface,
@@ -334,7 +342,7 @@ const TransactionForm = ({
                   backgroundColor: theme.colors.onSurface,
                 },
               ]}
-              onPress={addTransaction}
+              onPress={AddTransaction}
             >
               <Icon
                 size={24}
@@ -381,13 +389,13 @@ const styles = (theme: MD3Theme, keyWidth: number, screenHeight: number) =>
       width: keyWidth,
       height: keyWidth,
       backgroundColor: theme.colors.surfaceVariant,
-      borderRadius: 32,
+      borderRadius: 30,
       justifyContent: "center",
       alignItems: "center",
     },
     customKey: {
       width: keyWidth,
-      borderRadius: 32,
+      borderRadius: 30,
       justifyContent: "center",
       alignItems: "center",
     },

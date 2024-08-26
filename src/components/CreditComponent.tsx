@@ -160,7 +160,7 @@ function CreditComponentActions({ closeMenu, editPress, categoryId }: any) {
 const styles = (theme: MD3Theme) =>
   StyleSheet.create({
     action: {
-      padding: 15,
+      padding: 10,
       backgroundColor: theme.colors.background,
       borderRadius: 100,
     },

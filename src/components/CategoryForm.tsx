@@ -119,7 +119,7 @@ const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
 
   const addCategoryToFB = async () => {
     if (category.name != "") {
-      const result = await addCategory(category, user?.uid ?? "");
+      addCategory(category, user?.uid ?? "");
       categoryDispatch({ type: "reset", payload: "" });
       // console.log(result);
       close();
@@ -279,7 +279,7 @@ const CategoryForm = ({ close, cat }: CategoryFormPropsTypes) => {
           </>
         )}
         <Button mode="contained" onPress={addCategoryToFB}>
-          Add
+          {category?.id ? "Update" : "Add"}
         </Button>
       </View>
     </View>

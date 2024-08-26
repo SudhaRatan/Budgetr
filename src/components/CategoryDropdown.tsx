@@ -51,12 +51,12 @@ const CategoryDropdown = ({
 
   return (
     <View
-      style={[{ flexDirection: "column", flex: 1 }]}
+      style={[{ flexDirection: "column", flex: 1 }, parentStyles]}
       onLayout={(e) => {
         setDim(e.nativeEvent.layout);
       }}
     >
-      <TouchableOpacity style={parentStyles} onPress={openMenu}>{parent}</TouchableOpacity>
+      <TouchableOpacity  onPress={openMenu}>{parent}</TouchableOpacity>
       <Menu
         style={{ transform: [{ translateY: dim!.height }] }}
         visible={toggle}

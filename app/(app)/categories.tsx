@@ -5,6 +5,7 @@ import ExpensesDonutChart from "@/src/components/ExpensesDonutChart";
 import ThemedBackground from "@/src/components/ThemedBackground";
 import TransactionForm from "@/src/components/TransactionForm";
 import { useDataStore } from "@/src/stores/dataStore";
+import { usePrefereneStore } from "@/src/stores/preferencesStore";
 import { category } from "@/src/types/dbTypes";
 import { useMemo, useRef, useState } from "react";
 import { Dimensions, ScrollView, TouchableOpacity, View } from "react-native";
@@ -18,6 +19,8 @@ export default function Categories() {
   const BSRef2 = useRef<any>();
 
   const [formvisible, setformvisible] = useState(false);
+
+  const toggleType = usePrefereneStore((state) => state.toggleType);
 
   const debitCategories = useDataStore((state) => state.debitCategories);
 
@@ -53,62 +56,64 @@ export default function Categories() {
 
   return (
     <ThemedBackground style={{ flex: 1 }}>
-      {debitCategories ? (
-        <ScrollView
-          contentContainerStyle={{
-            alignItems: "center",
-          }}
-        >
-          <ExpensesDonutChart data={debitCategories} />
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              padding: cardPadding,
-              gap: cardPadding,
+      {toggleType === "Categories" ? (
+        debitCategories ? (
+          <ScrollView
+            contentContainerStyle={{
+              alignItems: "center",
             }}
           >
-            {debitCategories?.map((category) => {
-              return (
-                <DebitComponent
-                  key={category.id}
-                  editPress={() => {
-                    setCategory(category);
-                    openForm();
-                  }}
-                  onPress={() => {
-                    openTransactionForm();
-                    setPassedCategory(category);
-                  }}
-                  {...category}
-                />
-              );
-            })}
+            <ExpensesDonutChart data={debitCategories} />
             <View
               style={{
-                padding: 10,
-                width: width / 3 - 1.5 * cardPadding,
-                height: width / 3 - 1.5 * cardPadding,
-                justifyContent: "center",
-                alignItems: "center",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                padding: cardPadding,
+                gap: cardPadding,
               }}
             >
-              <TouchableOpacity
-                activeOpacity={0.5}
+              {debitCategories?.map((category) => {
+                return (
+                  <DebitComponent
+                    key={category.id}
+                    editPress={() => {
+                      setCategory(category);
+                      openForm();
+                    }}
+                    onPress={() => {
+                      openTransactionForm();
+                      setPassedCategory(category);
+                    }}
+                    {...category}
+                  />
+                );
+              })}
+              <View
                 style={{
-                  backgroundColor: theme.colors.inverseOnSurface,
-                  padding: 30,
-                  borderRadius: 100,
-                }}
-                onPress={() => {
-                  openForm();
+                  padding: 10,
+                  width: width / 3 - 1.5 * cardPadding,
+                  height: width / 3 - 1.5 * cardPadding,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                <Icon size={20} source="plus" />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  style={{
+                    backgroundColor: theme.colors.inverseOnSurface,
+                    padding: 30,
+                    borderRadius: 100,
+                  }}
+                  onPress={() => {
+                    openForm();
+                  }}
+                >
+                  <Icon size={20} source="plus" />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        ) : null
       ) : null}
       <Portal>
         <BottomSheet onClose={onCloseForm} ref={BSRef}>
