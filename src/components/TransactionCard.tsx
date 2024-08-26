@@ -1,12 +1,21 @@
 import { View, Text as Tt, StyleSheet, TextBase } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { category, transaction } from "../types/dbTypes";
 import { Text, useTheme } from "react-native-paper";
 import { MD3Theme, MD3Type } from "react-native-paper/lib/typescript/types";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  SharedValue,
+  useAnimatedStyle,
+  useDerivedValue,
+} from "react-native-reanimated";
 
 interface TransactionCardType extends transaction {
   categoryDetails?: category;
   ccDetails?: category;
+  scrollY: SharedValue<number>;
+  index: number;
 }
 
 const TransactionCard = ({
@@ -20,14 +29,58 @@ const TransactionCard = ({
   createdOn,
   categoryDetails,
   ccDetails,
+  scrollY,
+  index,
 }: TransactionCardType) => {
   const theme = useTheme();
   const style = styles(theme);
 
+  const [itemHeight, setItemHeight] = useState(0);
+
+  const sy = useDerivedValue(() => {
+    return scrollY.value;
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: interpolate(
+            sy.value,
+            [-1, 0, (itemHeight + 15) * index, (itemHeight + 15) * (index + 2)],
+            [1, 1, 1, 0],
+            Extrapolation.CLAMP
+          ),
+        },
+      ],
+      opacity: interpolate(
+        sy.value,
+        [-1, 0, (itemHeight + 40) * index, (itemHeight + 40) * (index + 1)],
+        [1, 1, 1, 0],
+        Extrapolation.CLAMP
+      ),
+    };
+  });
+
   return (
-    <View style={[style.mainContainer]}>
+    <Animated.View
+      style={[style.mainContainer, animatedStyle]}
+      onLayout={({
+        nativeEvent: {
+          layout: { height },
+        },
+      }) => {
+        setItemHeight(height);
+      }}
+    >
       <View style={style.cont1}>
-        <Text style={[style.emojiTextContainer,{backgroundColor: categoryDetails?.color}]} variant="bodyLarge">
+        <Text
+          style={[
+            style.emojiTextContainer,
+            { backgroundColor: categoryDetails?.color },
+          ]}
+          variant="bodyLarge"
+        >
           {categoryDetails?.emoji}
         </Text>
         <View style={style.baseInfo}>
@@ -35,7 +88,7 @@ const TransactionCard = ({
             <Tt style={style.textBase2}>
               {type === "Debit" ? "Used for" : ""}
             </Tt>
-            <View style={{ flexDirection: "row", alignItems:"center" }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Tt style={style.textBase1}>{categoryDetails?.name}</Tt>
               {subcategory && (
                 <Text style={style.textBase3}> ({subcategory})</Text>
@@ -64,7 +117,7 @@ const TransactionCard = ({
           </Tt>
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -85,7 +138,7 @@ const styles = (theme: MD3Theme) =>
     emojiTextContainer: {
       padding: 10,
       borderRadius: theme.roundness * 4,
-    //   backgroundColor: theme.colors.background,
+      //   backgroundColor: theme.colors.background,
     },
     baseInfo: {
       flexDirection: "row",

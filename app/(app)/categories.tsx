@@ -17,6 +17,7 @@ import {
   View,
 } from "react-native";
 import { Icon, Portal, Text, useTheme } from "react-native-paper";
+import Animated, { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 
 export default function Categories() {
   const { width } = Dimensions.get("screen");
@@ -63,6 +64,7 @@ export default function Categories() {
     []
   );
   const [cat, setCategory] = useState<category>(cat1);
+  const scrollY = useSharedValue(0);
 
   return (
     <ThemedBackground style={{ flex: 1 }}>
@@ -127,24 +129,30 @@ export default function Categories() {
         ) : null
       ) : transactions ? (
         <View>
-          <FlatList
-          onScroll={({nativeEvent:{contentOffset}}) => {
-            console.log(contentOffset.y)
-          }}
+          <Animated.FlatList
+            onScroll={({
+              nativeEvent: {
+                contentOffset: { y },
+              },
+            }) => {
+              scrollY.value = y;
+            }}
             data={transactions}
             contentContainerStyle={{ gap: 15, padding: 10 }}
             keyExtractor={(i, index) => i.id!}
             renderItem={({ item, index }) => {
               return (
-                <TransactionCard
-                  categoryDetails={
-                    debitCategories?.find((i) => i.id === item.categoryToId)!
-                  }
-                  ccDetails={
-                    categories?.find((i) => i.id === item.categoryFromId)!
-                  }
-                  {...item}
-                />
+                  <TransactionCard
+                  index={index}
+                  scrollY={scrollY}
+                    categoryDetails={
+                      debitCategories?.find((i) => i.id === item.categoryToId)!
+                    }
+                    ccDetails={
+                      categories?.find((i) => i.id === item.categoryFromId)!
+                    }
+                    {...item}
+                  />
               );
             }}
           />
