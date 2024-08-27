@@ -14,7 +14,6 @@ import { category, transaction } from "../types/dbTypes";
 import { useDataStore } from "../stores/dataStore";
 import BlinkingCursor from "./BlinkingCursor";
 import { ScrollView } from "react-native-gesture-handler";
-import { StatusBar } from "expo-status-bar";
 import PressableWithBorder from "./PressableWithBorder";
 import CategoryDropdown from "./CategoryDropdown";
 import { useAuthStore } from "../stores/authStore";

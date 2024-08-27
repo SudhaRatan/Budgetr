@@ -3,15 +3,11 @@ import React, { useState } from "react";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs/src/types";
 import ThemedBackground from "./ThemedBackground";
 import {
-  Button,
   Icon,
-  SegmentedButtons,
   Text,
   useTheme,
 } from "react-native-paper";
-import SegmentedControl, {
-  SegmentedControlComponent,
-} from "@react-native-segmented-control/segmented-control";
+import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import CategoryDropdown from "./CategoryDropdown";
 import { usePrefereneStore } from "../stores/preferencesStore";
 import { useShallow } from "zustand/react/shallow";

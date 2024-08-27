@@ -6,11 +6,13 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { Provider as PaperProvider } from "react-native-paper";
+import { MD3DarkTheme, MD3LightTheme, Provider as PaperProvider } from "react-native-paper";
 import auth from "@react-native-firebase/auth";
 import { useAuthStore } from "@/src/stores/authStore";
 import "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { StatusBar, useColorScheme } from "react-native";
+import { usePrefereneStore } from "@/src/stores/preferencesStore";
 
 export const firebaseAuth = auth;
 
@@ -42,10 +44,12 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
+
   useEffect(() => {
     const subscriber = firebaseAuth().onAuthStateChanged((user) => {
       setUser(user);
     });
+
     return subscriber; // unsubscribe on unmount
   }, []);
 
@@ -57,9 +61,21 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const colorScheme = useColorScheme();
+  const theme = usePrefereneStore((state) => state.theme);
+  useEffect(() => {StatusBar.setBarStyle(
+    theme === "dark-content"
+      ? "dark-content"
+      : theme=== "light-content"
+      ? "light-content"
+      : colorScheme ==="dark" ? "light-content" : "dark-content"
+  );
+  },[])
   return (
     <GestureHandlerRootView>
-      <PaperProvider>
+      <PaperProvider
+       theme={theme === "dark-content" ? MD3LightTheme : theme === "light-content" ? MD3DarkTheme : undefined}
+       >
         <ThemedBackground>
           <Stack
             screenOptions={{
