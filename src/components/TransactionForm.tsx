@@ -1,6 +1,7 @@
 import {
   Dimensions,
   Keyboard,
+  Linking,
   Pressable,
   StyleSheet,
   TextInput,
@@ -9,7 +10,15 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Icon, MD3Theme, Text, useTheme } from "react-native-paper";
+import {
+  Button,
+  Chip,
+  Icon,
+  MD3Theme,
+  Switch,
+  Text,
+  useTheme,
+} from "react-native-paper";
 import { category, transaction } from "../types/dbTypes";
 import { useDataStore } from "../stores/dataStore";
 import BlinkingCursor from "./BlinkingCursor";
@@ -18,6 +27,11 @@ import PressableWithBorder from "./PressableWithBorder";
 import CategoryDropdown from "./CategoryDropdown";
 import { useAuthStore } from "../stores/authStore";
 import { addTransaction } from "../bl/dbFunctions";
+import {
+  BarcodeScanningResult,
+  CameraView,
+  useCameraPermissions,
+} from "expo-camera";
 
 interface TransactionFormType {
   categoryToPass: category;
@@ -28,7 +42,7 @@ const TransactionForm = ({
   categoryToPass,
   closeForm,
 }: TransactionFormType) => {
-  const user = useAuthStore(state => state.user)
+  const user = useAuthStore((state) => state.user);
   const theme = useTheme();
   const { width, height } = Dimensions.get("screen");
   const categories = useDataStore((state) => state.categories);
@@ -43,6 +57,12 @@ const TransactionForm = ({
   const [amount, setAmount] = useState<string>("");
   const [subCategory, setSubCategory] = useState<string>("");
 
+  const [cam, setCam] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
+  const [upi, setUpi] = useState<string | null>(null);
+  const [flash, setFlash] = useState(false);
+  const [zoom, setZoom] = useState(false);
+
   const setCategoryFromObj = (id: string) => {
     setCategoryFrom(categories!.find((c) => c.id === id)!);
   };
@@ -54,13 +74,56 @@ const TransactionForm = ({
   const style = styles(theme, keyWidth, height);
 
   const AddTransaction = () => {
-    if(amount == "" || Number(amount) == 0) {
-      ToastAndroid.show("Enter amount",ToastAndroid.SHORT)
-      return
+    if (amount == "" || Number(amount) == 0) {
+      ToastAndroid.show("Enter amount", ToastAndroid.SHORT);
+      return;
     }
-    addTransaction({amount: Number(amount),type: "Debit", categoryFromId: categoryFrom.id!, categoryToId: categoryTo.id!, uid: user?.uid!, subcategory: subCategory}, user!.uid )
+    addTransaction(
+      {
+        amount: Number(amount),
+        type: "Debit",
+        categoryFromId: categoryFrom.id!,
+        categoryToId: categoryTo.id!,
+        uid: user?.uid!,
+        subcategory: subCategory,
+      },
+      user!.uid
+    );
+    if (upi) {
+      var url = new URL(upi);
+      url.searchParams.delete("aid");
+      url.searchParams.delete("sign");
+      // Linking.openURL(upi)
+      // Linking.openURL(
+      //   url.toString() +
+      //     `&am=${amount}&cu=INR` +
+      //     (subCategory ? `&tn=${subCategory}` : "")
+      // );
+      const id = url.searchParams.get("pa")?.toString();
+      const name = url.searchParams.get("pn")?.toString();
+
+      // upiqr({payeeName: name!, payeeVPA: id!, amount: amount}).then(i => {
+      //   console.log(i)
+      //   Linking.openURL(i)
+      // })
+      
+      // OneUpi.initiate(
+      //   { amount, note: subCategory, name : name!, upiId: id! },
+      //   (success: any) => {
+      //     console.log(success);
+      //   },
+      //   (e: any) => {
+      //     console.log(e);
+      //   }
+      // );
+      // Linking.openURL(
+      //   "upi://pay?pa=suyashvashishtha@axl&pn=Suyash%20Vashishtha&mc=0000&mode=02&purpose=00"
+      // );
+      // console.log(url.toString());
+      setUpi(null);
+    }
     setAmount("");
-    setSubCategory("")
+    setSubCategory("");
     closeForm();
   };
 
@@ -89,6 +152,28 @@ const TransactionForm = ({
   useEffect(() => {
     setCategoryTo(categoryToPass);
   }, [categoryToPass]);
+
+  const handleScanQR = () => {
+    if (!permission?.granted) {
+      requestPermission();
+      return;
+    }
+    setCam(true);
+  };
+
+  const closeCamera = () => {
+    setCam(false);
+  };
+
+  const onBarcodeScan = ({ data }: BarcodeScanningResult) => {
+    setUpi(data);
+    closeCamera();
+    // console.log(new URL(data).searchParams.get("pn"));
+  };
+
+  const toggleZoom = () => {
+    setZoom(!zoom);
+  };
 
   return (
     <ScrollView
@@ -176,7 +261,21 @@ const TransactionForm = ({
           fontSize: 16,
         }}
       />
-      {!keyboardShown && (
+      {upi && (
+        <Chip
+          closeIcon={"close"}
+          onClose={() => setUpi(null)}
+          style={{ flexDirection: "row" }}
+          mode="flat"
+        >
+          <Text>Paying: </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {new URL(upi).searchParams.get("pn") ??
+              new URL(upi).searchParams.get("pa")}
+          </Text>
+        </Chip>
+      )}
+      {!keyboardShown && !cam && (
         <View style={{ flexDirection: "row", gap: 0 }}>
           <View
             style={{ flexDirection: "row", flexWrap: "wrap", gap: 2, flex: 3 }}
@@ -321,6 +420,7 @@ const TransactionForm = ({
               <Icon size={24} source={"calendar-month-outline"} />
             </PressableWithBorder>
             <PressableWithBorder
+              onPress={handleScanQR}
               ContainerStyle={style.keyCap}
               style={[
                 style.customKey,
@@ -351,6 +451,70 @@ const TransactionForm = ({
             </PressableWithBorder>
           </View>
         </View>
+      )}
+      {/* CameraView */}
+      {!keyboardShown && cam && (
+        <CameraView
+          barcodeScannerSettings={{
+            barcodeTypes: ["qr"],
+          }}
+          facing="back"
+          zoom={zoom ? 0.5 : 0}
+          enableTorch={flash}
+          style={{
+            flex: 1,
+            width: "100%",
+            height: width,
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            position: "relative",
+          }}
+          onBarcodeScanned={onBarcodeScan}
+        >
+          <TouchableOpacity
+            onPress={closeCamera}
+            style={{
+              // alignSelf: "flex-end",
+              padding: 10,
+              backgroundColor: theme.colors.secondaryContainer,
+              borderRadius: 10,
+              margin: 5,
+            }}
+          >
+            <Icon size={24} source={"close"} />
+          </TouchableOpacity>
+          <View
+            style={{
+              alignItems: "center",
+              backgroundColor: "#00000050",
+              padding: 10,
+              flexDirection: "row",
+            }}
+          >
+            <Text style={{ color: theme.colors.secondaryContainer }}>
+              Toggle Flash
+            </Text>
+            <Switch
+              value={flash}
+              onChange={({ nativeEvent: { value } }) => {
+                setFlash(value);
+              }}
+            />
+            <TouchableOpacity
+              style={{
+                backgroundColor: theme.colors.secondaryContainer,
+                padding: 10,
+                borderRadius: 10,
+              }}
+              onPress={toggleZoom}
+            >
+              <Icon
+                source={zoom ? "magnify-minus" : "magnify-plus"}
+                size={24}
+              />
+            </TouchableOpacity>
+          </View>
+        </CameraView>
       )}
     </ScrollView>
   );

@@ -72,7 +72,7 @@ export default function Home() {
                 flexDirection: "row",
               }}
             >
-              <Text variant="headlineLarge">&#8377; </Text>
+              <Text style={{ fontWeight: "bold", fontSize: 28 }}>&#8377; </Text>
               <AnimatedText
                 initialValue={0}
                 actualValue={categories
@@ -80,8 +80,8 @@ export default function Home() {
                   .reduce((ac, x) => ac + x, 0)}
                 style={{
                   fontWeight: "bold",
+                  fontSize: 28
                 }}
-                variant="displayMedium"
               />
             </View>
           </View>

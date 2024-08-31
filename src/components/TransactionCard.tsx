@@ -49,7 +49,7 @@ const TransactionCard = ({
             sy.value,
             [-1, 0, (itemHeight + 15) * index, (itemHeight + 15) * (index + 2)],
             [1, 1, 1, 0],
-            Extrapolation.CLAMP
+            Extrapolation.CLAMP,
           ),
         },
       ],

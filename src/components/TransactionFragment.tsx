@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import React from "react";
-import Animated, { useSharedValue } from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import TransactionCard from "./TransactionCard";
 import { useDataStore } from "../stores/dataStore";
 
@@ -14,13 +14,11 @@ const TransactionFragment = () => {
   return (
     <View>
       <Animated.FlatList
-        onScroll={({
-          nativeEvent: {
-            contentOffset: { y },
-          },
-        }) => {
-          scrollY.value = y;
-        }}
+        onScroll={useAnimatedScrollHandler({
+          onScroll: (event) => {
+            scrollY.value = event.contentOffset.y;
+          }
+        })}
         data={transactions}
         contentContainerStyle={{ gap: 15, padding: 10 }}
         keyExtractor={(i, index) => i.id!}

@@ -39,7 +39,7 @@ export default function Categories() {
     setformvisible(true);
   };
 
-  const onCloseTransactionForm = () => {};
+  const onCloseTransactionForm = () => { };
 
   const openTransactionForm = () => {
     BSRef2.current.open();
@@ -62,61 +62,62 @@ export default function Categories() {
       {toggleType === "Categories" ? (
         // categories
         debitCategories ? (
-            <ScrollView
-              contentContainerStyle={{
-                alignItems: "center",
+          <ScrollView
+            contentContainerStyle={{
+              alignItems: "center",
+            }}
+          >
+            <ExpensesDonutChart data={debitCategories} />
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                padding: cardPadding,
+                gap: cardPadding,
               }}
             >
-              <ExpensesDonutChart data={debitCategories} />
-              <View
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  padding: cardPadding,
-                  gap: cardPadding,
-                }}
-              >
-                {debitCategories?.map((category) => {
-                  return (
-                    <DebitComponent
-                      key={category.id}
-                      editPress={() => {
-                        setCategory(category);
-                        openForm();
-                      }}
-                      onPress={() => {
-                        openTransactionForm();
-                        setPassedCategory(category);
-                      }}
-                      {...category}
-                    />
-                  );
-                })}
-                <View
-                  style={{
-                    padding: 10,
-                    width: width / 3 - 1.5 * cardPadding,
-                    height: width / 3 - 1.5 * cardPadding,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    style={{
-                      backgroundColor: theme.colors.inverseOnSurface,
-                      padding: 30,
-                      borderRadius: 100,
-                    }}
-                    onPress={() => {
+              {debitCategories?.map((category, index) => {
+                return (
+                  <DebitComponent
+                    index={index}
+                    key={category.id}
+                    editPress={() => {
+                      setCategory(category);
                       openForm();
                     }}
-                  >
-                    <Icon size={20} source="plus" />
-                  </TouchableOpacity>
-                </View>
+                    onPress={() => {
+                      openTransactionForm();
+                      setPassedCategory(category);
+                    }}
+                    {...category}
+                  />
+                );
+              })}
+              <View
+                style={{
+                  padding: 10,
+                  width: width / 3 - 1.5 * cardPadding,
+                  height: width / 3 - 1.5 * cardPadding,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  style={{
+                    backgroundColor: theme.colors.inverseOnSurface,
+                    padding: 30,
+                    borderRadius: 100,
+                  }}
+                  onPress={() => {
+                    openForm();
+                  }}
+                >
+                  <Icon size={20} source="plus" />
+                </TouchableOpacity>
               </View>
-            </ScrollView>
+            </View>
+          </ScrollView>
         ) : null
       ) : transactions ? (
         <TransactionFragment />
@@ -127,7 +128,7 @@ export default function Categories() {
             <CategoryForm cat={cat} close={BSRef.current.close} />
           )}
         </BottomSheet>
-        <BottomSheet onClose={() => {}} ref={BSRef2}>
+        <BottomSheet onClose={() => { }} ref={BSRef2}>
           {debitCategories && (
             <TransactionForm
               categoryToPass={passedCategory!}

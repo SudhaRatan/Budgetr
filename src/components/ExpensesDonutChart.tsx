@@ -1,6 +1,6 @@
 import { Dimensions, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
-import { useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import { category } from "../types/dbTypes";
 import AnimatedText from "./AnimatedText";
 
@@ -32,13 +32,15 @@ const ExpensesDonutChart = ({ data }: ExpensesDonutChartType) => {
             fontWeight="800"
             backgroundColor={theme.colors.background}
             centerLabelComponent={() => (
-              <AnimatedText
-                showCurrency
-                initialValue={0}
-                actualValue={data
-                  .map((i) => i.totalAmount)
-                  .reduce((acc, iniVal) => acc + iniVal, 0)}
-              />
+              <View style={{ flexDirection: "row" }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24 }}>&#8377; </Text>
+                <AnimatedText
+                  initialValue={0}
+                  actualValue={data
+                    .map((i) => i.totalAmount)
+                    .reduce((acc, iniVal) => acc + iniVal, 0)}
+                />
+              </View>
             )}
           />
         )}

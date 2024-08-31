@@ -5,14 +5,16 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { category } from "../types/dbTypes";
 import { Icon, MD3Theme, Text, useTheme } from "react-native-paper";
 import { deleteCategory } from "../bl/dbFunctions";
+import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from "react-native-reanimated";
 
 interface DebitComponentType extends category {
   editPress: () => void;
   onPress: () => void;
+  index: number
 }
 
 const DebitComponent = ({
@@ -24,6 +26,7 @@ const DebitComponent = ({
   totalAmount,
   editPress,
   onPress,
+  index
 }: DebitComponentType) => {
   const { width } = Dimensions.get("screen");
   const cardPadding = 10;
@@ -31,10 +34,25 @@ const DebitComponent = ({
 
   // menu
   const [visible, setVisible] = useState(false);
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+
+  const animVal = useSharedValue(0)
+
+  useEffect(() => {
+    animVal.value = withDelay(index * 20, withSpring(1, {
+      damping: 13,
+      stiffness: 100,
+      mass: 1,
+    }))
+  }, [])
+
+  const animStyle = useAnimatedStyle(() => {
+    return { transform: [{ scale: interpolate(animVal.value, [0, 1], [0.5, 1]) }], opacity: animVal.value }
+  })
 
   return (
-    <Pressable
-      style={{
+    <AnimatedPressable
+      style={[{
         padding: 10,
         width: width / 3 - 1.5 * cardPadding,
         borderRadius: 8 * theme.roundness,
@@ -42,7 +60,7 @@ const DebitComponent = ({
         paddingBottom: 20,
         elevation: 1,
         gap: 10,
-      }}
+      }, animStyle]}
       onLongPress={() => setVisible(!visible)}
       onPress={() => {
         onPress();
@@ -119,7 +137,7 @@ const DebitComponent = ({
           />
         )}
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 };
 
