@@ -1,4 +1,4 @@
-import { router, useRouter } from "expo-router";
+import { router, useFocusEffect, useRouter } from "expo-router";
 import ThemedBackground from "@/src/components/ThemedBackground";
 import { Icon, Portal, Text, useTheme } from "react-native-paper";
 import {
@@ -11,10 +11,11 @@ import {
 import { useDataStore } from "@/src/stores/dataStore";
 import CreditComponent from "@/src/components/CreditComponent";
 import BottomSheet from "@/src/components/BottomSheet";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useMemo, useRef, useState } from "react";
 import CategoryForm from "@/src/components/CategoryForm";
 import { category } from "@/src/types/dbTypes";
 import AnimatedText from "@/src/components/AnimatedText";
+import { AnimatedtextContext } from "@/src/contexts/Animatedtext";
 
 export default function Home() {
   const theme = useTheme();
@@ -24,9 +25,12 @@ export default function Home() {
   const cardPadding = 10;
   const BSRef = useRef<any>();
 
+  const { setUpdate } = useContext(AnimatedtextContext);
+
   const onCloseForm = () => {
     setformvisible(false);
     setCategory(cat1);
+    setUpdate!((prev) => !prev);
   };
 
   const openForm = () => {
@@ -45,6 +49,12 @@ export default function Home() {
     []
   );
   const [cat, setCategory] = useState<category>(cat1);
+
+  useFocusEffect(
+    useCallback(() => {
+      setUpdate!((prev) => !prev);
+    }, [])
+  );
 
   return (
     <ThemedBackground style={styles.container}>
@@ -80,7 +90,7 @@ export default function Home() {
                   .reduce((ac, x) => ac + x, 0)}
                 style={{
                   fontWeight: "bold",
-                  fontSize: 28
+                  fontSize: 28,
                 }}
               />
             </View>

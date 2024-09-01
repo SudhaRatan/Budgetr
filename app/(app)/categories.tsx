@@ -5,10 +5,19 @@ import ExpensesDonutChart from "@/src/components/ExpensesDonutChart";
 import ThemedBackground from "@/src/components/ThemedBackground";
 import TransactionForm from "@/src/components/TransactionForm";
 import TransactionFragment from "@/src/components/TransactionFragment";
+import { AnimatedtextContext } from "@/src/contexts/Animatedtext";
 import { useDataStore } from "@/src/stores/dataStore";
 import { usePrefereneStore } from "@/src/stores/preferencesStore";
 import { category } from "@/src/types/dbTypes";
-import { Suspense, useMemo, useRef, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import {
+  Suspense,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Dimensions, ScrollView, TouchableOpacity, View } from "react-native";
 import { Icon, Portal, Text, useTheme } from "react-native-paper";
 
@@ -29,9 +38,12 @@ export default function Categories() {
 
   const [passedCategory, setPassedCategory] = useState<category>();
 
+  const { setUpdate } = useContext(AnimatedtextContext);
+
   const onCloseForm = () => {
     setformvisible(false);
     setCategory(cat1);
+    setUpdate!((prev) => !prev);
   };
 
   const openForm = () => {
@@ -39,7 +51,7 @@ export default function Categories() {
     setformvisible(true);
   };
 
-  const onCloseTransactionForm = () => { };
+  const onCloseTransactionForm = () => {};
 
   const openTransactionForm = () => {
     BSRef2.current.open();
@@ -56,6 +68,12 @@ export default function Categories() {
     []
   );
   const [cat, setCategory] = useState<category>(cat1);
+
+  useFocusEffect(
+    useCallback(() => {
+      setUpdate!((prev) => !prev);
+    }, [])
+  );
 
   return (
     <ThemedBackground style={{ flex: 1 }}>
@@ -128,7 +146,12 @@ export default function Categories() {
             <CategoryForm cat={cat} close={BSRef.current.close} />
           )}
         </BottomSheet>
-        <BottomSheet onClose={() => { }} ref={BSRef2}>
+        <BottomSheet
+          onClose={() => {
+            setUpdate!((prev) => !prev);
+          }}
+          ref={BSRef2}
+        >
           {debitCategories && (
             <TransactionForm
               categoryToPass={passedCategory!}
