@@ -1,8 +1,12 @@
 import { View } from "react-native";
 import React from "react";
-import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
 import TransactionCard from "./TransactionCard";
 import { useDataStore } from "../stores/dataStore";
+import { Text } from "react-native-paper";
 
 const TransactionFragment = () => {
   const debitCategories = useDataStore((state) => state.debitCategories);
@@ -17,7 +21,7 @@ const TransactionFragment = () => {
         onScroll={useAnimatedScrollHandler({
           onScroll: (event) => {
             scrollY.value = event.contentOffset.y;
-          }
+          },
         })}
         data={transactions}
         contentContainerStyle={{ gap: 15, padding: 10 }}
@@ -27,14 +31,17 @@ const TransactionFragment = () => {
             <TransactionCard
               index={index}
               scrollY={scrollY}
-              categoryDetails={
-                debitCategories?.find((i) => i.id === item.categoryToId)!
-              }
+              categoryDetails={item.categoryDetails}
               ccDetails={categories?.find((i) => i.id === item.categoryFromId)!}
               {...item}
             />
           );
         }}
+        ListEmptyComponent={
+          <Text variant="titleLarge" style={{ fontWeight: "bold", margin: 10 }}>
+            No transactions
+          </Text>
+        }
       />
     </View>
   );

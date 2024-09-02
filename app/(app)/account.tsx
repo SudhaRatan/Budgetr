@@ -4,7 +4,7 @@ import { StatusBar, StyleSheet, useColorScheme, View } from "react-native";
 import { Button, SegmentedButtons, Text, useTheme } from "react-native-paper";
 import { firebaseAuth } from "../_layout";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
-import { usePrefereneStore } from "@/src/stores/preferencesStore";
+import { usePreferenceStore } from "@/src/stores/preferencesStore";
 import { useState } from "react";
 
 export default function Account() {
@@ -16,15 +16,22 @@ export default function Account() {
   };
   const colorScheme = useColorScheme();
 
-  const setTheme = usePrefereneStore((state) => state.setTheme);
-  const theme = usePrefereneStore((state) => state.theme);
+  const setTheme = usePreferenceStore((state) => state.setTheme);
+  const theme = usePreferenceStore((state) => state.theme);
 
   return (
     <ThemedBackground style={styles.container}>
-      <View style={{ flexDirection: "row", justifyContent:"flex-start", alignItems:"center", gap: 10 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          gap: 10,
+        }}
+      >
         <Text variant="titleMedium">Theme: </Text>
         <SegmentedButtons
-        style={{flex: 1}}
+          style={{ flex: 1 }}
           value={theme}
           onValueChange={(e) => {
             setTheme(e);

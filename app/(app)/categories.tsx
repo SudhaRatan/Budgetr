@@ -7,7 +7,7 @@ import TransactionForm from "@/src/components/TransactionForm";
 import TransactionFragment from "@/src/components/TransactionFragment";
 import { AnimatedtextContext } from "@/src/contexts/Animatedtext";
 import { useDataStore } from "@/src/stores/dataStore";
-import { usePrefereneStore } from "@/src/stores/preferencesStore";
+import { usePreferenceStore } from "@/src/stores/preferencesStore";
 import { category } from "@/src/types/dbTypes";
 import { useFocusEffect } from "expo-router";
 import {
@@ -30,7 +30,7 @@ export default function Categories() {
 
   const [formvisible, setformvisible] = useState(false);
 
-  const toggleType = usePrefereneStore((state) => state.toggleType);
+  const toggleType = usePreferenceStore((state) => state.toggleType);
 
   const debitCategories = useDataStore((state) => state.debitCategories);
 
@@ -69,6 +69,20 @@ export default function Categories() {
   );
   const [cat, setCategory] = useState<category>(cat1);
 
+  const processedCategories = useMemo(() => {
+    return debitCategories?.map((c) => {
+      const ta =
+        transactions
+          ?.filter((t) => t.categoryToId == c.id)
+          ?.reduce((acc, curr) => acc + curr.amount, 0) || 0;
+      return { ...c, totalAmount: ta };
+    });
+  }, [debitCategories, transactions]);
+
+  const totalTransactionAmount = useMemo(() => {
+    return transactions?.reduce((acc, curr) => acc + curr.amount, 0) || 0;
+  }, [transactions]);
+
   useFocusEffect(
     useCallback(() => {
       setUpdate!((prev) => !prev);
@@ -80,12 +94,17 @@ export default function Categories() {
       {toggleType === "Categories" ? (
         // categories
         debitCategories ? (
-          <ScrollView
-            contentContainerStyle={{
-              alignItems: "center",
-            }}
-          >
-            <ExpensesDonutChart data={debitCategories} />
+          <ScrollView>
+            {totalTransactionAmount != 0 ? (
+              <ExpensesDonutChart data={processedCategories!} />
+            ) : (
+              <Text
+                variant="titleLarge"
+                style={{ fontWeight: "bold", margin: 10 }}
+              >
+                No transactions
+              </Text>
+            )}
             <View
               style={{
                 flexDirection: "row",
@@ -94,7 +113,11 @@ export default function Categories() {
                 gap: cardPadding,
               }}
             >
-              {debitCategories?.map((category, index) => {
+              {processedCategories?.map((category, index) => {
+                transactions
+                  ?.filter((t) => t.categoryToId == category.id)
+                  ?.reduce((acc, curr) => acc + curr.amount, 0) ??
+                  category.totalAmount;
                 return (
                   <DebitComponent
                     index={index}

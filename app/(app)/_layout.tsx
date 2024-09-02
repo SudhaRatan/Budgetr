@@ -6,11 +6,7 @@ import { useTheme } from "react-native-paper";
 import TabIcon from "@/src/components/TabIcon";
 import TabLabel from "@/src/components/TabLabel";
 import { useEffect } from "react";
-import {
-  getCreditCategories,
-  getDebitCategories,
-  getTransactions,
-} from "@/src/bl/dbFunctions";
+import { getCreditCategories } from "@/src/bl/dbFunctions";
 import { useDataStore } from "@/src/stores/dataStore";
 import CategoryScreenHeader from "@/src/components/CategoryScreenHeader";
 import AnimatedTextProvider from "@/src/contexts/Animatedtext";
@@ -26,11 +22,11 @@ function AuthenticatedScreenNav() {
   const setDebitCategories = useDataStore((state) => state.setDebitCategories);
 
   useEffect(() => {
-    if (user) {
-      getCreditCategories(user.uid);
-      getDebitCategories(user.uid);
-      getTransactions(user.uid);
-    }
+    (async () => {
+      if (user) {
+        getCreditCategories(user.uid);
+      }
+    })();
 
     return () => {
       setCategories(null);

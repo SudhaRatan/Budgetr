@@ -31,41 +31,69 @@ export const getCreditCategories = (
 export const getDebitCategories = (
   uid: string,
   setDebitCategories: (categories: any) => void
-) => {
-  _firestore
-    .collection("categories")
-    .where(Filter.and(Filter("uid", "==", uid), Filter("type", "==", "Debit")))
-    .orderBy("createdOn", "desc")
-    .onSnapshot(
-      (querySnapShot) => {
-        setDebitCategories(
-          querySnapShot.docs.map((i) => ({ id: i.id, ...i.data() }))
-        );
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+): Promise<category[]> => {
+  return new Promise((resolve, reject) => {
+    _firestore
+      .collection("categories")
+      .where(
+        Filter.and(Filter("uid", "==", uid), Filter("type", "==", "Debit"))
+      )
+      .orderBy("createdOn", "desc")
+      .onSnapshot(
+        (querySnapShot) => {
+          setDebitCategories(
+            querySnapShot.docs.map((i) => ({ id: i.id, ...i.data() }))
+          );
+          resolve(
+            querySnapShot.docs.map((i) => ({
+              id: i.id,
+              ...i.data(),
+            })) as category[]
+          );
+        },
+        (error) => {
+          console.error(error);
+          reject(false);
+        }
+      );
+  });
 };
 
 interface transactionParamTypes {
   uid: string;
   setTransactions: (transactions: any) => void;
+  startDate: Date;
+  endDate: Date;
+  debitCategories: category[];
 }
 
 export const getTransactions = ({
   uid,
   setTransactions,
+  startDate,
+  endDate,
+  debitCategories,
 }: transactionParamTypes) => {
   _firestore
     .collection("transactions")
-    .where("uid", "==", uid)
+    .where(
+      Filter.and(
+        Filter("uid", "==", uid),
+        Filter("createdOn", ">=", Timestamp.fromDate(startDate ?? new Date())),
+        Filter("createdOn", "<=", Timestamp.fromDate(endDate ?? new Date()))
+      )
+    )
     .orderBy("createdOn", "desc")
     .onSnapshot(
       (querySnapshot) => {
-        setTransactions(
-          querySnapshot.docs.map((i) => ({ id: i.id, ...i.data() }))
-        );
+        const transactions = querySnapshot.docs.map((i) => ({
+          id: i.id,
+          ...i.data(),
+          categoryDetails: debitCategories?.find(
+            (j) => j.id === i.data().categoryToId
+          )!,
+        })) as transaction[];
+        setTransactions(transactions);
       },
       (error) => {
         console.error(error);

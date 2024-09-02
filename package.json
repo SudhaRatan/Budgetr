@@ -22,6 +22,7 @@
     "@react-native-google-signin/google-signin": "^12.2.1",
     "@react-native-segmented-control/segmented-control": "2.5.2",
     "@react-navigation/native": "^6.0.2",
+    "date-fns": "^3.6.0",
     "emojilib": "^3.0.12",
     "expo": "~51.0.24",
     "expo-camera": "~15.0.15",

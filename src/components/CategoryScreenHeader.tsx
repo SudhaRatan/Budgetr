@@ -1,16 +1,19 @@
-import { View, StatusBar, Dimensions } from "react-native";
+import {
+  View,
+  StatusBar,
+  Dimensions,
+  Touchable,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState } from "react";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs/src/types";
 import ThemedBackground from "./ThemedBackground";
-import {
-  Icon,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { Icon, Text, useTheme } from "react-native-paper";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import CategoryDropdown from "./CategoryDropdown";
-import { usePrefereneStore } from "../stores/preferencesStore";
+import { usePreferenceStore } from "../stores/preferencesStore";
 import { useShallow } from "zustand/react/shallow";
+import DateRangeSelector from "./DateRangeSelector";
 
 interface CategoryScreenHeaderType extends BottomTabHeaderProps {}
 
@@ -22,7 +25,7 @@ const CategoryScreenHeader = ({
 }: CategoryScreenHeaderType) => {
   const theme = useTheme();
 
-  const { toggleType, setToggleType } = usePrefereneStore(
+  const { toggleType, setToggleType } = usePreferenceStore(
     useShallow((state) => ({
       toggleType: state.toggleType,
       setToggleType: state.setToggleType,
@@ -37,9 +40,22 @@ const CategoryScreenHeader = ({
         elevation: 2,
       }}
     >
-      <Text variant="titleLarge" style={{ textAlign: "center", fontWeight:"bold" }}>
-        Expenses
-      </Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingHorizontal: 10,
+        }}
+      >
+        <Text
+          variant="titleLarge"
+          style={{ textAlign: "center", fontWeight: "bold", flex: 1 }}
+        >
+          Expenses
+        </Text>
+        <DateRangeSelector />
+      </View>
       <View style={{ flexDirection: "row", gap: 10, padding: 5 }}>
         <SegmentedControl
           values={["Categories", "Transactions"]}
@@ -52,10 +68,10 @@ const CategoryScreenHeader = ({
             );
           }}
           style={{ flex: 2, alignItems: "center" }}
-          activeFontStyle={{color: theme.colors.background}}
-          fontStyle={{color: theme.colors.onSurfaceVariant}}
+          activeFontStyle={{ color: theme.colors.background }}
+          fontStyle={{ color: theme.colors.onSurfaceVariant }}
         />
-        <CategoryDropdown
+        {/* <CategoryDropdown
           parentStyles={{ flex: 1, alignSelf: "center" }}
           parent={
             <View
@@ -79,7 +95,7 @@ const CategoryScreenHeader = ({
             { id: "2", title: "Monthly" },
           ]}
           itemOnPress={() => {}}
-        />
+        /> */}
       </View>
     </View>
   );

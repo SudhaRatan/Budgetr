@@ -19,4 +19,5 @@ export type transaction = {
   amount: number; // user
   type: "Credit" | "Debit"; // user
   createdOn?: Timestamp;
+  categoryDetails?: category;
 };

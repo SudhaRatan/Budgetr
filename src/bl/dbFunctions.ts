@@ -18,12 +18,23 @@ export const getCreditCategories = (uid: string) => {
   GCC(uid, setCategories);
 };
 
-export const getDebitCategories = (uid: string) => {
-  GDC(uid, setDebitCategories);
+export const getDebitCategories = async (uid: string) => {
+  return await GDC(uid, setDebitCategories);
 };
 
-export const getTransactions = (uid: string) => {
-  GT({ uid, setTransactions });
+export const getTransactions = (
+  uid: string,
+  startDate: Date,
+  endDate: Date,
+  debitCategories: category[]
+) => {
+  GT({
+    uid,
+    setTransactions,
+    startDate,
+    endDate,
+    debitCategories,
+  });
 };
 
 export const addCategory = (category: category, uid: string) => {
