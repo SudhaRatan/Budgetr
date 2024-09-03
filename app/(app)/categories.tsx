@@ -18,7 +18,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { Dimensions, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  ScrollView,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Icon, Portal, Text, useTheme } from "react-native-paper";
 
 export default function Categories() {
@@ -33,6 +39,7 @@ export default function Categories() {
   const toggleType = usePreferenceStore((state) => state.toggleType);
 
   const debitCategories = useDataStore((state) => state.debitCategories);
+  const categories = useDataStore((state) => state.categories);
 
   const transactions = useDataStore((state) => state.transactions);
 
@@ -98,42 +105,64 @@ export default function Categories() {
             {totalTransactionAmount != 0 ? (
               <ExpensesDonutChart data={processedCategories!} />
             ) : (
-              <Text
-                variant="titleLarge"
-                style={{ fontWeight: "bold", margin: 10 }}
-              >
-                No transactions
-              </Text>
+              processedCategories &&
+              processedCategories.length > 0 && (
+                <Text
+                  variant="titleLarge"
+                  style={{ fontWeight: "bold", margin: 10 }}
+                >
+                  No transactions
+                </Text>
+              )
             )}
             <View
               style={{
-                flexDirection: "row",
+                flexDirection:
+                  processedCategories && processedCategories?.length > 0
+                    ? "row"
+                    : "column",
                 flexWrap: "wrap",
                 padding: cardPadding,
                 gap: cardPadding,
               }}
             >
-              {processedCategories?.map((category, index) => {
-                transactions
-                  ?.filter((t) => t.categoryToId == category.id)
-                  ?.reduce((acc, curr) => acc + curr.amount, 0) ??
-                  category.totalAmount;
-                return (
-                  <DebitComponent
-                    index={index}
-                    key={category.id}
-                    editPress={() => {
-                      setCategory(category);
-                      openForm();
-                    }}
-                    onPress={() => {
-                      openTransactionForm();
-                      setPassedCategory(category);
-                    }}
-                    {...category}
-                  />
-                );
-              })}
+              {processedCategories && processedCategories?.length > 0 ? (
+                processedCategories?.map((category, index) => {
+                  transactions
+                    ?.filter((t) => t.categoryToId == category.id)
+                    ?.reduce((acc, curr) => acc + curr.amount, 0) ??
+                    category.totalAmount;
+                  return (
+                    <DebitComponent
+                      index={index}
+                      key={category.id}
+                      editPress={() => {
+                        setCategory(category);
+                        openForm();
+                      }}
+                      onPress={() => {
+                        if (categories && categories.length > 0) {
+                          openTransactionForm();
+                          setPassedCategory(category);
+                        } else {
+                          ToastAndroid.show(
+                            "Add an income category in the home screen",
+                            ToastAndroid.SHORT
+                          );
+                        }
+                      }}
+                      {...category}
+                    />
+                  );
+                })
+              ) : (
+                <Text
+                  variant="titleLarge"
+                  style={{ fontWeight: "bold", margin: 10 }}
+                >
+                  Add Categories
+                </Text>
+              )}
               <View
                 style={{
                   padding: 10,
@@ -175,14 +204,17 @@ export default function Categories() {
           }}
           ref={BSRef2}
         >
-          {debitCategories && (
-            <TransactionForm
-              categoryToPass={passedCategory!}
-              closeForm={() => {
-                BSRef2.current.close();
-              }}
-            />
-          )}
+          {debitCategories != null &&
+            categories != null &&
+            categories.length > 0 &&
+            debitCategories.length > 0 && (
+              <TransactionForm
+                categoryToPass={passedCategory!}
+                closeForm={() => {
+                  BSRef2.current.close();
+                }}
+              />
+            )}
         </BottomSheet>
       </Portal>
     </ThemedBackground>

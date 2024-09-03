@@ -106,7 +106,7 @@ function AuthenticatedScreenNav() {
           <Tabs.Screen
             name="dashboard"
             options={{
-              header: (props) => <CustomHeader title="Three" {...props} />,
+              header: (props) => <CustomHeader title="Dashboard" {...props} />,
               tabBarIcon: (props) => (
                 <TabIcon
                   focusedSource="chart-box"

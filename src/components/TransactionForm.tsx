@@ -90,36 +90,52 @@ const TransactionForm = ({
       user!.uid
     );
     if (upi) {
-      var url = new URL(upi);
-      url.searchParams.delete("aid");
-      url.searchParams.delete("sign");
-      // Linking.openURL(upi)
-      // Linking.openURL(
-      //   url.toString() +
-      //     `&am=${amount}&cu=INR` +
-      //     (subCategory ? `&tn=${subCategory}` : "")
-      // );
-      const id = url.searchParams.get("pa")?.toString();
-      const name = url.searchParams.get("pn")?.toString();
+      // var url = new URL(upi);
+      // url.searchParams.delete("aid");
+      // url.searchParams.delete("sign");
+      // url.searchParams.delete("mode");
+      // url.searchParams.delete("purpose");
+      // url.searchParams.delete("mc");
+      // const id = url.searchParams.get("pa")?.toString();
+      // const name = url.searchParams.get("pn")?.toString();
 
-      // upiqr({payeeName: name!, payeeVPA: id!, amount: amount}).then(i => {
-      //   console.log(i)
-      //   Linking.openURL(i)
-      // })
-      
-      // OneUpi.initiate(
-      //   { amount, note: subCategory, name : name!, upiId: id! },
-      //   (success: any) => {
-      //     console.log(success);
-      //   },
-      //   (e: any) => {
-      //     console.log(e);
-      //   }
-      // );
-      // Linking.openURL(
-      //   "upi://pay?pa=suyashvashishtha@axl&pn=Suyash%20Vashishtha&mc=0000&mode=02&purpose=00"
-      // );
+      // url.searchParams.append("am", amount); // Add amount to UPI intent
+      // subCategory != "" && url.searchParams.append("tn", subCategory); // Add note to UPI intent
+
+      // Linking.openURL(url.toString()).catch((err) => {
+      //   console.log(err);
+      //   ToastAndroid.show("Failed to open UPI app", ToastAndroid.SHORT);
+      // });
       // console.log(url.toString());
+      try {
+        const url = new URL(upi);
+        url.searchParams.delete("aid");
+        url.searchParams.delete("sign");
+        url.searchParams.delete("mode");
+        url.searchParams.delete("purpose");
+        url.searchParams.delete("mc");
+        url.searchParams.delete("orgid");
+
+        // Add required parameters
+        // url.searchParams.append('pa', payeeAddress);
+        // url.searchParams.append('pn', payeeName);
+        url.searchParams.append("am", amount);
+        url.searchParams.append("cu", "INR");
+
+        // Add optional parameters if provided
+        if (subCategory) url.searchParams.append("tn", subCategory);
+
+        console.log("UPI URL:", url.toString());
+
+        // Open the URL
+        Linking.openURL(url.toString());
+        // Linking.openURL(
+        //   "upi://pay?pa=rattankumar1112@ybl&pn=DK Bose&mc=0000&tr=123456789ABCDEFG&tn=HelloWorld&am=11&cu=INR"
+        // );
+      } catch (error) {
+        console.error("Failed to open UPI app:", error);
+        ToastAndroid.show("Failed to open UPI app", ToastAndroid.SHORT);
+      }
       setUpi(null);
     }
     setAmount("");
@@ -197,7 +213,7 @@ const TransactionForm = ({
             <View
               style={[
                 style.categoryDropdown,
-                { backgroundColor: categoryFrom.color },
+                { backgroundColor: categoryFrom?.color },
               ]}
             >
               <View style={style.categoryDropdownInner}>
@@ -459,7 +475,7 @@ const TransactionForm = ({
             barcodeTypes: ["qr"],
           }}
           facing="back"
-          zoom={zoom ? 0.5 : 0}
+          zoom={zoom ? 0.75 : 0.5}
           enableTorch={flash}
           style={{
             flex: 1,

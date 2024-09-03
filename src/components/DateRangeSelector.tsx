@@ -44,7 +44,19 @@ const DateRangeSelector = () => {
   const debitCategories = useDataStore((state) => state.debitCategories);
 
   useEffect(() => {
-    updateDateAndFetchTransactions(new Date());
+    // updateDateAndFetchTransactions(new Date());
+    (async () => {
+      var newDate = new Date();
+      var newMode = dateRangeMode;
+      const mode = newMode || dateRangeMode;
+      setCurrentDate(newDate);
+      if (newMode) setDateRangeMode(newMode);
+      const dates = getDateRangeHere(newDate, mode);
+      // getDebitCategories(user!.uid);
+      // getTransactions(user!.uid, dates.start, dates.end, debitCategories!);
+      const debitCategories = await getDebitCategories(user!.uid);
+      getTransactions(user!.uid, start, end, debitCategories);
+    })();
   }, []);
 
   const getDateRangeHere: (
@@ -75,8 +87,8 @@ const DateRangeSelector = () => {
     setCurrentDate(newDate);
     if (newMode) setDateRangeMode(newMode);
     const dates = getDateRangeHere(newDate, mode);
-    getTransactions(user!.uid, dates.start, dates.end, debitCategories!);
     getDebitCategories(user!.uid);
+    getTransactions(user!.uid, dates.start, dates.end, debitCategories!);
     // const debitCategories = await getDebitCategories(user!.uid);
     // getTransactions(user!.uid, start, end, debitCategories);
   };

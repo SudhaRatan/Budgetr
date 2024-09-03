@@ -1,11 +1,11 @@
-import ThemedBackground from '@/src/components/ThemedBackground';
-import { StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import ThemedBackground from "@/src/components/ThemedBackground";
+import { StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
 
 export default function Dashboard() {
   return (
     <ThemedBackground style={styles.container}>
-      <Text style={styles.title}>Dashboard page</Text>
+      <Text style={styles.title}>Work in progress</Text>
       <View style={styles.separator} />
     </ThemedBackground>
   );
@@ -14,16 +14,16 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   separator: {
     marginVertical: 30,
     height: 1,
-    width: '80%',
+    width: "80%",
   },
 });
