@@ -51,6 +51,7 @@ export default function Dashboard() {
       <View style={styles.chartContainer}>
         <BarChart
           data={chartData}
+          yAxisThickness={0}
           // Customize chart appearance
           // ...
         />
