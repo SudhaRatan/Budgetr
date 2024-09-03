@@ -7,31 +7,52 @@ import ThemedBackground from "@/src/components/ThemedBackground";
 const data = [
   {
     label: "Mon",
-    value: 8, // Total spending for Monday
+    transactions: [
+      { value: 5, categoryId: "food" },
+      { value: 3, categoryId: "transport" },
+    ],
   },
   {
     label: "Tue",
-    value: 10, // Total spending for Tuesday
+    transactions: [
+      { value: 8, categoryId: "food" },
+      { value: 2, categoryId: "entertainment" },
+    ],
   },
   {
     label: "Wed",
-    value: 17, // Total spending for Wednesday
+    transactions: [
+      { value: 12, categoryId: "food" },
+      { value: 5, categoryId: "transport" },
+    ],
   },
   {
     label: "Thu",
-    value: 11, // Total spending for Thursday
+    transactions: [
+      { value: 7, categoryId: "food" },
+      { value: 4, categoryId: "entertainment" },
+    ],
   },
   {
     label: "Fri",
-    value: 22, // Total spending for Friday
+    transactions: [
+      { value: 15, categoryId: "food" },
+      { value: 7, categoryId: "transport" },
+    ],
   },
   {
     label: "Sat",
-    value: 9, // Total spending for Saturday
+    transactions: [
+      { value: 6, categoryId: "food" },
+      { value: 3, categoryId: "entertainment" },
+    ],
   },
   {
     label: "Sun",
-    value: 12, // Total spending for Sunday
+    transactions: [
+      { value: 10, categoryId: "food" },
+      { value: 2, categoryId: "transport" },
+    ],
   },
 ];
 
@@ -52,8 +73,8 @@ export default function Dashboard() {
         <BarChart
           data={chartData}
           yAxisThickness={0}
-          // stackedBar={true} // Remove stackedBar as we are not grouping by category
-          // groupBy="categoryId" // Remove groupBy as we are not grouping by category
+          stackedBar={true}
+          groupBy="categoryId"
           barWidth={20}
           colors={{
             food: "#FF6347",
