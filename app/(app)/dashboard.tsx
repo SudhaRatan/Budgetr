@@ -3,12 +3,18 @@ import { Text } from "react-native-paper";
 import { BarChart } from "react-native-gifted-charts";
 import { useState, useEffect } from "react";
 import ThemedBackground from "@/src/components/ThemedBackground";
+import { modifyColor } from "@/src/utils/analyticsUtils";
 
 const data = [
   {
     stacks: [
-      { value: 10, color: "orange" },
-      { value: 20, color: "#4ABFF4", marginBottom: 2 },
+      { value: 10, gradientColor: "yellow", color: "green" },
+      {
+        value: 20,
+        color: "#4ABFF4",
+        marginBottom: 2,
+        gradientColor: modifyColor("#4ABFF4"),
+      },
     ],
     label: "Sun",
   },
@@ -52,17 +58,22 @@ export default function Dashboard() {
   return (
     <ThemedBackground style={styles.container}>
       <Text style={styles.title}>Weekly Spending</Text>
-      <View style={styles.chartContainer}>
+      <View style={[styles.chartContainer, { width, paddingRight: 50 }]}>
         <BarChart
-          width={width - 200}
           stackData={chartData}
           yAxisThickness={0}
           noOfSections={4}
           barWidth={20}
           barBorderRadius={5}
+          showGradient
+          isAnimated
+          scrollAnimation
+          animationDuration={600}
+          xAxisLabelTextStyle={{ color: "gray" }}
+          yAxisTextStyle={{ color: "gray" }}
+          xAxisColor={"gray"}
         />
       </View>
-      <View style={styles.separator} />
     </ThemedBackground>
   );
 }
@@ -70,8 +81,6 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     padding: 20,
   },
   title: {
@@ -80,13 +89,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   chartContainer: {
-    width: "100%",
-    height: 300,
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "100%",
-    backgroundColor: "#ddd",
+    // height: 300,
+    // width: "100%",
   },
 });
