@@ -6,32 +6,53 @@ import ThemedBackground from "@/src/components/ThemedBackground";
 
 const data = [
   {
-    value: 10,
     label: "Mon",
+    transactions: [
+      { value: 5, categoryId: "food" },
+      { value: 3, categoryId: "transport" },
+    ],
   },
   {
-    value: 15,
     label: "Tue",
+    transactions: [
+      { value: 8, categoryId: "food" },
+      { value: 2, categoryId: "entertainment" },
+    ],
   },
   {
-    value: 20,
     label: "Wed",
+    transactions: [
+      { value: 12, categoryId: "food" },
+      { value: 5, categoryId: "transport" },
+    ],
   },
   {
-    value: 18,
     label: "Thu",
+    transactions: [
+      { value: 7, categoryId: "food" },
+      { value: 4, categoryId: "entertainment" },
+    ],
   },
   {
-    value: 25,
     label: "Fri",
+    transactions: [
+      { value: 15, categoryId: "food" },
+      { value: 7, categoryId: "transport" },
+    ],
   },
   {
-    value: 12,
     label: "Sat",
+    transactions: [
+      { value: 6, categoryId: "food" },
+      { value: 3, categoryId: "entertainment" },
+    ],
   },
   {
-    value: 17,
     label: "Sun",
+    transactions: [
+      { value: 10, categoryId: "food" },
+      { value: 2, categoryId: "transport" },
+    ],
   },
 ];
 
@@ -52,6 +73,8 @@ export default function Dashboard() {
         <BarChart
           data={chartData}
           yAxisThickness={0}
+          stackedBar={true}
+          groupBy="categoryId"
           // Customize chart appearance
           // ...
         />
