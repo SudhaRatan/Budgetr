@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { LineChart } from "react-native-gifted-charts";
+import { BarChart } from "react-native-gifted-charts";
 import { useState, useEffect } from "react";
 import ThemedBackground from "@/src/components/ThemedBackground";
 
@@ -49,7 +49,7 @@ export default function Dashboard() {
     <ThemedBackground style={styles.container}>
       <Text style={styles.title}>Weekly Spending</Text>
       <View style={styles.chartContainer}>
-        <LineChart
+        <BarChart
           data={chartData}
           // Customize chart appearance
           // ...
@@ -65,19 +65,21 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    padding: 20,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
+    marginBottom: 20,
   },
   chartContainer: {
-    width: "80%",
-    height: 200,
-    marginVertical: 20,
+    width: "100%",
+    height: 300,
   },
   separator: {
     marginVertical: 30,
     height: 1,
-    width: "80%",
+    width: "100%",
+    backgroundColor: "#ddd",
   },
 });
