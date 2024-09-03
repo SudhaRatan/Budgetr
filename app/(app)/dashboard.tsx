@@ -75,6 +75,12 @@ export default function Dashboard() {
           yAxisThickness={0}
           stackedBar={true}
           groupBy="categoryId"
+          barWidth={20}
+          colors={{
+            food: "#FF6347",
+            transport: "#4169E1",
+            entertainment: "#008000",
+          }}
           // Customize chart appearance
           // ...
         />
