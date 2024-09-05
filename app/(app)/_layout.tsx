@@ -89,7 +89,9 @@ function AuthenticatedScreenNav() {
           <Tabs.Screen
             name="categories"
             options={{
-              header: (props) => <CategoryScreenHeader {...props} />,
+              header: (props) => (
+                <CategoryScreenHeader showToggle title="Expenses" {...props} />
+              ),
               tabBarIcon: (props) => (
                 <TabIcon
                   focusedSource="view-grid"
@@ -106,7 +108,9 @@ function AuthenticatedScreenNav() {
           <Tabs.Screen
             name="dashboard"
             options={{
-              header: (props) => <CustomHeader title="Dashboard" {...props} />,
+              header: (props) => (
+                <CategoryScreenHeader title="Dashboard" {...props} />
+              ),
               tabBarIcon: (props) => (
                 <TabIcon
                   focusedSource="chart-box"

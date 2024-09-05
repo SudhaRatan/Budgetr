@@ -14,6 +14,7 @@ import {
   Suspense,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -25,6 +26,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import PagerView from "react-native-pager-view";
 import { Icon, Portal, Text, useTheme } from "react-native-paper";
 
 export default function Categories() {
@@ -96,102 +98,203 @@ export default function Categories() {
     }, [])
   );
 
+  // const PagerRef = useRef<PagerView>(null);
+
+  // useEffect(() => {
+  //   PagerRef.current?.setPage(
+  //     toggleType === "Categories" ? 0 : toggleType === "Transactions" ? 1 : 2
+  //   );
+  // }, [toggleType]);
+
   return (
     <ThemedBackground style={{ flex: 1 }}>
-      {toggleType === "Categories" ? (
-        // categories
-        debitCategories ? (
-          <ScrollView>
-            {totalTransactionAmount != 0 ? (
-              <ExpensesDonutChart data={processedCategories!} />
-            ) : (
-              processedCategories &&
-              processedCategories.length > 0 && (
-                <Text
-                  variant="titleLarge"
-                  style={{ fontWeight: "bold", margin: 10 }}
-                >
-                  No transactions
-                </Text>
-              )
-            )}
-            <View
-              style={{
-                flexDirection:
-                  processedCategories && processedCategories?.length > 0
-                    ? "row"
-                    : "column",
-                flexWrap: "wrap",
-                padding: cardPadding,
-                gap: cardPadding,
-              }}
-            >
-              {processedCategories && processedCategories?.length > 0 ? (
-                processedCategories?.map((category, index) => {
-                  transactions
-                    ?.filter((t) => t.categoryToId == category.id)
-                    ?.reduce((acc, curr) => acc + curr.amount, 0) ??
-                    category.totalAmount;
-                  return (
-                    <DebitComponent
-                      index={index}
-                      key={category.id}
-                      editPress={() => {
-                        setCategory(category);
-                        openForm();
-                      }}
-                      onPress={() => {
-                        if (categories && categories.length > 0) {
-                          openTransactionForm();
-                          setPassedCategory(category);
-                        } else {
-                          ToastAndroid.show(
-                            "Add an income category in the home screen",
-                            ToastAndroid.SHORT
-                          );
-                        }
-                      }}
-                      {...category}
-                    />
-                  );
-                })
+      {/* <PagerView ref={PagerRef} style={{ flex: 1 }}>
+        <View key={1}>
+          {debitCategories && (
+            <ScrollView>
+              {totalTransactionAmount != 0 ? (
+                <ExpensesDonutChart data={processedCategories!} />
               ) : (
-                <Text
-                  variant="titleLarge"
-                  style={{ fontWeight: "bold", margin: 10 }}
-                >
-                  Add Categories
-                </Text>
+                processedCategories &&
+                processedCategories.length > 0 && (
+                  <Text
+                    variant="titleLarge"
+                    style={{ fontWeight: "bold", margin: 10 }}
+                  >
+                    No transactions
+                  </Text>
+                )
               )}
               <View
                 style={{
-                  padding: 10,
-                  width: width / 3 - 1.5 * cardPadding,
-                  height: width / 3 - 1.5 * cardPadding,
-                  justifyContent: "center",
-                  alignItems: "center",
+                  flexDirection:
+                    processedCategories && processedCategories?.length > 0
+                      ? "row"
+                      : "column",
+                  flexWrap: "wrap",
+                  padding: cardPadding,
+                  gap: cardPadding,
                 }}
               >
-                <TouchableOpacity
-                  activeOpacity={0.5}
+                {processedCategories && processedCategories?.length > 0 ? (
+                  processedCategories?.map((category, index) => {
+                    transactions
+                      ?.filter((t) => t.categoryToId == category.id)
+                      ?.reduce((acc, curr) => acc + curr.amount, 0) ??
+                      category.totalAmount;
+                    return (
+                      <DebitComponent
+                        index={index}
+                        key={category.id}
+                        editPress={() => {
+                          setCategory(category);
+                          openForm();
+                        }}
+                        onPress={() => {
+                          if (categories && categories.length > 0) {
+                            openTransactionForm();
+                            setPassedCategory(category);
+                          } else {
+                            ToastAndroid.show(
+                              "Add an income category in the home screen",
+                              ToastAndroid.SHORT
+                            );
+                          }
+                        }}
+                        {...category}
+                      />
+                    );
+                  })
+                ) : (
+                  <Text
+                    variant="titleLarge"
+                    style={{ fontWeight: "bold", margin: 10 }}
+                  >
+                    Add Categories
+                  </Text>
+                )}
+                <View
                   style={{
-                    backgroundColor: theme.colors.inverseOnSurface,
-                    padding: 30,
-                    borderRadius: 100,
-                  }}
-                  onPress={() => {
-                    openForm();
+                    padding: 10,
+                    width: width / 3 - 1.5 * cardPadding,
+                    height: width / 3 - 1.5 * cardPadding,
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  <Icon size={20} source="plus" />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={{
+                      backgroundColor: theme.colors.inverseOnSurface,
+                      padding: 30,
+                      borderRadius: 100,
+                    }}
+                    onPress={() => {
+                      openForm();
+                    }}
+                  >
+                    <Icon size={20} source="plus" />
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          </ScrollView>
-        ) : null
-      ) : transactions ? (
-        <TransactionFragment />
-      ) : null}
+            </ScrollView>
+          )}
+        </View>
+        <View key={2}>{transactions && <TransactionFragment />}</View>
+        <Text key={3}>Analytics</Text>
+      </PagerView> */}
+      {toggleType === "Categories"
+        ? // categories
+          debitCategories && (
+            <ScrollView>
+              {totalTransactionAmount != 0 ? (
+                <ExpensesDonutChart data={processedCategories!} />
+              ) : (
+                processedCategories &&
+                processedCategories.length > 0 && (
+                  <Text
+                    variant="titleLarge"
+                    style={{ fontWeight: "bold", margin: 10 }}
+                  >
+                    No transactions
+                  </Text>
+                )
+              )}
+              <View
+                style={{
+                  flexDirection:
+                    processedCategories && processedCategories?.length > 0
+                      ? "row"
+                      : "column",
+                  flexWrap: "wrap",
+                  padding: cardPadding,
+                  gap: cardPadding,
+                }}
+              >
+                {processedCategories && processedCategories?.length > 0 ? (
+                  processedCategories?.map((category, index) => {
+                    transactions
+                      ?.filter((t) => t.categoryToId == category.id)
+                      ?.reduce((acc, curr) => acc + curr.amount, 0) ??
+                      category.totalAmount;
+                    return (
+                      <DebitComponent
+                        index={index}
+                        key={category.id}
+                        editPress={() => {
+                          setCategory(category);
+                          openForm();
+                        }}
+                        onPress={() => {
+                          if (categories && categories.length > 0) {
+                            openTransactionForm();
+                            setPassedCategory(category);
+                          } else {
+                            ToastAndroid.show(
+                              "Add an income category in the home screen",
+                              ToastAndroid.SHORT
+                            );
+                          }
+                        }}
+                        {...category}
+                      />
+                    );
+                  })
+                ) : (
+                  <Text
+                    variant="titleLarge"
+                    style={{ fontWeight: "bold", margin: 10 }}
+                  >
+                    Add Categories
+                  </Text>
+                )}
+                <View
+                  style={{
+                    padding: 10,
+                    width: width / 3 - 1.5 * cardPadding,
+                    height: width / 3 - 1.5 * cardPadding,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={{
+                      backgroundColor: theme.colors.inverseOnSurface,
+                      padding: 30,
+                      borderRadius: 100,
+                    }}
+                    onPress={() => {
+                      openForm();
+                    }}
+                  >
+                    <Icon size={20} source="plus" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
+          )
+        : transactions && <TransactionFragment />}
       <Portal>
         <BottomSheet onClose={onCloseForm} ref={BSRef}>
           {formvisible && (

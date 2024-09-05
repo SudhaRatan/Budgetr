@@ -15,13 +15,18 @@ import { usePreferenceStore } from "../stores/preferencesStore";
 import { useShallow } from "zustand/react/shallow";
 import DateRangeSelector from "./DateRangeSelector";
 
-interface CategoryScreenHeaderType extends BottomTabHeaderProps {}
+interface CategoryScreenHeaderType extends BottomTabHeaderProps {
+  title: string;
+  showToggle?: boolean;
+}
 
 const CategoryScreenHeader = ({
   layout,
   navigation,
   options,
   route,
+  title,
+  showToggle,
 }: CategoryScreenHeaderType) => {
   const theme = useTheme();
 
@@ -37,7 +42,7 @@ const CategoryScreenHeader = ({
       style={{
         paddingTop: StatusBar.currentHeight,
         backgroundColor: theme.colors.background,
-        elevation: 2,
+        // elevation: 2,
       }}
     >
       <View
@@ -52,26 +57,35 @@ const CategoryScreenHeader = ({
           variant="titleLarge"
           style={{ textAlign: "center", fontWeight: "bold", flex: 1 }}
         >
-          Expenses
+          {title}
         </Text>
         <DateRangeSelector />
       </View>
-      <View style={{ flexDirection: "row", gap: 10, padding: 5 }}>
-        <SegmentedControl
-          values={["Categories", "Transactions"]}
-          selectedIndex={toggleType === "Categories" ? 0 : 1}
-          backgroundColor={theme.colors.surfaceDisabled}
-          tintColor={theme.colors.primary}
-          onChange={({ nativeEvent: { selectedSegmentIndex } }) => {
-            setToggleType(
-              selectedSegmentIndex === 0 ? "Categories" : "Transactions"
-            );
-          }}
-          style={{ flex: 2, alignItems: "center" }}
-          activeFontStyle={{ color: theme.colors.background }}
-          fontStyle={{ color: theme.colors.onSurfaceVariant }}
-        />
-        {/* <CategoryDropdown
+      {showToggle && (
+        <View style={{ flexDirection: "row", gap: 10, padding: 5 }}>
+          <SegmentedControl
+            values={["Categories", "Transactions"]}
+            selectedIndex={toggleType === "Categories" ? 0 : 1}
+            backgroundColor={theme.colors.surfaceDisabled}
+            tintColor={theme.colors.primary}
+            onChange={({ nativeEvent: { selectedSegmentIndex } }) => {
+              switch (selectedSegmentIndex) {
+                case 0:
+                  setToggleType("Categories");
+                  break;
+                case 1:
+                  setToggleType("Transactions");
+                  break;
+                  1;
+                default:
+                  break;
+              }
+            }}
+            style={{ flex: 2, alignItems: "center" }}
+            activeFontStyle={{ color: theme.colors.background }}
+            fontStyle={{ color: theme.colors.onSurfaceVariant }}
+          />
+          {/* <CategoryDropdown
           parentStyles={{ flex: 1, alignSelf: "center" }}
           parent={
             <View
@@ -96,7 +110,8 @@ const CategoryScreenHeader = ({
           ]}
           itemOnPress={() => {}}
         /> */}
-      </View>
+        </View>
+      )}
     </View>
   );
 };
