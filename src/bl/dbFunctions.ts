@@ -5,6 +5,7 @@ import {
   getCreditCategories as GCC,
   getDebitCategories as GDC,
   getTransactions as GT,
+  deleteTransaction as DT,
 } from "../db/firestoreDB";
 import { useDataStore } from "../stores/dataStore";
 import { category, transaction } from "../types/dbTypes";
@@ -48,6 +49,14 @@ export const addTransaction = (transaction: transaction, uid: string) => {
 export const deleteCategory = (categoryId: string) => {
   try {
     deleteCategoryDB(categoryId);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteTransaction = (transactionId: string) => {
+  try {
+    if (transactionId) DT(transactionId);
   } catch (error) {
     console.log(error);
   }

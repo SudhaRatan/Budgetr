@@ -27,7 +27,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "react-native-paper";
 
 const BottomSheet = forwardRef(
-  ({ children, className, style, onClose }: any, ref) => {
+  ({ children, className, style, onClose, hidePill }: any, ref) => {
     useEffect(() => {
       const bh = BackHandler.addEventListener("hardwareBackPress", () => {
         close();
@@ -103,7 +103,7 @@ const BottomSheet = forwardRef(
       const opacity = interpolate(
         translate.value,
         [0, bottomBarHeight + insets.bottom + 50],
-        [0.5, 0],
+        [0.6, 0],
         Extrapolation.CLAMP
       );
       const display = opacity === 0 ? "none" : "flex";
@@ -132,20 +132,23 @@ const BottomSheet = forwardRef(
               animationStyle,
               styles.container,
               { backgroundColor: theme.colors.background },
+              style,
             ]}
             onLayout={({ nativeEvent }) => {
               const { height } = nativeEvent.layout;
               setBottomBarHeight(height);
             }}
           >
-            <View style={[style, { flex: 1 }]}>{children}</View>
-            <View
-              //   className="w-[50] h-[4] bg-tertiary-dark absolute mt-[8] rounded-full"
-              style={[
-                styles.pill,
-                { backgroundColor: theme.colors.onBackground },
-              ]}
-            />
+            <View style={[{ flex: 1 }]}>{children}</View>
+            {!hidePill && (
+              <View
+                //   className="w-[50] h-[4] bg-tertiary-dark absolute mt-[8] rounded-full"
+                style={[
+                  styles.pill,
+                  { backgroundColor: theme.colors.onBackground },
+                ]}
+              />
+            )}
           </Animated.View>
           {/* </ThemedBackground> */}
         </GestureDetector>
