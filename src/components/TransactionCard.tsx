@@ -1,4 +1,10 @@
-import { View, Text as Tt, StyleSheet, TextBase } from "react-native";
+import {
+  View,
+  Text as Tt,
+  StyleSheet,
+  TextBase,
+  GestureResponderEvent,
+} from "react-native";
 import React, { useState } from "react";
 import { category, transaction } from "../types/dbTypes";
 import { Text, useTheme } from "react-native-paper";
@@ -10,12 +16,16 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
 } from "react-native-reanimated";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 interface TransactionCardType extends transaction {
   categoryDetails?: category;
   ccDetails?: category;
   scrollY: SharedValue<number>;
   index: number;
+  onPress:
+    | (((event: GestureResponderEvent) => void) & (() => void))
+    | undefined;
 }
 
 const TransactionCard = ({
@@ -31,6 +41,7 @@ const TransactionCard = ({
   ccDetails,
   scrollY,
   index,
+  onPress,
 }: TransactionCardType) => {
   const theme = useTheme();
   const style = styles(theme);
@@ -49,22 +60,22 @@ const TransactionCard = ({
             sy.value,
             [-1, 0, (itemHeight + 15) * index, (itemHeight + 15) * (index + 2)],
             [1, 1, 1, 0],
-            Extrapolation.CLAMP,
+            Extrapolation.CLAMP
           ),
         },
       ],
-      opacity: interpolate(
-        sy.value,
-        [-1, 0, (itemHeight + 40) * index, (itemHeight + 40) * (index + 1)],
-        [1, 1, 1, 0],
-        Extrapolation.CLAMP
-      ),
+      // opacity: interpolate(
+      //   sy.value,
+      //   [-1, 0, (itemHeight + 40) * index, (itemHeight + 40) * (index + 1)],
+      //   [1, 1, 1, 0],
+      //   Extrapolation.CLAMP
+      // ),
     };
   });
 
   return (
     <Animated.View
-      style={[style.mainContainer, animatedStyle]}
+      style={[animatedStyle]}
       onLayout={({
         nativeEvent: {
           layout: { height },
@@ -73,50 +84,57 @@ const TransactionCard = ({
         setItemHeight(height);
       }}
     >
-      <View style={style.cont1}>
-        <Text
-          style={[
-            style.emojiTextContainer,
-            { backgroundColor: categoryDetails?.color },
-          ]}
-          variant="bodyLarge"
-        >
-          {categoryDetails?.emoji}
-        </Text>
-        <View style={style.baseInfo}>
-          <View style={{ justifyContent: "space-between" }}>
-            <Tt style={style.textBase2}>
-              {type === "Debit" ? "Used for" : ""}
-            </Tt>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Tt style={style.textBase1}>{categoryDetails?.name}</Tt>
-              {subcategory && (
-                <Text style={style.textBase3}> ({subcategory})</Text>
-              )}
+      <TouchableHighlight
+        style={{ borderRadius: style.mainContainer.borderRadius }}
+        onPress={onPress}
+      >
+        <View style={style.mainContainer}>
+          <View style={style.cont1}>
+            <Text
+              style={[
+                style.emojiTextContainer,
+                { backgroundColor: categoryDetails?.color },
+              ]}
+              variant="bodyLarge"
+            >
+              {categoryDetails?.emoji}
+            </Text>
+            <View style={style.baseInfo}>
+              <View style={{ justifyContent: "space-between" }}>
+                <Tt style={style.textBase2}>
+                  {type === "Debit" ? "Used for" : ""}
+                </Tt>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Tt style={style.textBase1}>{categoryDetails?.name}</Tt>
+                  {subcategory && (
+                    <Text style={style.textBase3}> ({subcategory})</Text>
+                  )}
+                </View>
+              </View>
+              <Tt style={style.textBase1}>&#8377;{amount}</Tt>
             </View>
           </View>
-          <Tt style={style.textBase1}>&#8377;{amount}</Tt>
+          <View style={style.cont2}>
+            <Text style={style.textBase3}>
+              {createdOn?.toDate().toDateString()}
+            </Text>
+            <View style={{ flexDirection: "row" }}>
+              <Tt style={style.textBase2}>
+                {type === "Debit" ? "Paid from" : ""}{" "}
+              </Tt>
+              <Tt
+                style={{
+                  fontWeight: "500",
+                  fontSize: 12,
+                  color: theme.colors.secondary,
+                }}
+              >
+                {ccDetails?.name}
+              </Tt>
+            </View>
+          </View>
         </View>
-      </View>
-      <View style={style.cont2}>
-        <Text style={style.textBase3}>
-          {createdOn?.toDate().toDateString()}
-        </Text>
-        <View style={{ flexDirection: "row" }}>
-          <Tt style={style.textBase2}>
-            {type === "Debit" ? "Paid from" : ""}{" "}
-          </Tt>
-          <Tt
-            style={{
-              fontWeight: "500",
-              fontSize: 12,
-              color: theme.colors.secondary,
-            }}
-          >
-            {ccDetails?.name}
-          </Tt>
-        </View>
-      </View>
+      </TouchableHighlight>
     </Animated.View>
   );
 };

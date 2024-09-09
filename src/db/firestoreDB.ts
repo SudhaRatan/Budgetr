@@ -160,3 +160,13 @@ export const createTransaction = (uid: string, transaction: transaction) => {
       });
   } catch (error) {}
 };
+
+export const deleteTransaction = (transactionId: string) => {
+  try {
+    if (transactionId) {
+      _firestore.collection("transactions").doc(transactionId).delete();
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
