@@ -55,9 +55,9 @@ export const deleteCategory = (categoryId: string) => {
   }
 };
 
-export const deleteTransaction = (transactionId: string) => {
+export const deleteTransaction = (transaction: transaction) => {
   try {
-    if (transactionId) DT(transactionId);
+    if (transaction) DT(transaction);
   } catch (error) {
     console.log(error);
   }

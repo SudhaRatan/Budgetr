@@ -17,6 +17,7 @@ import {
 } from "react-native-paper";
 import BottomSheet from "./BottomSheet";
 import { deleteTransaction } from "../bl/dbFunctions";
+import { transaction } from "../types/dbTypes";
 
 const TransactionFragment = () => {
   const debitCategories = useDataStore((state) => state.debitCategories);
@@ -28,7 +29,13 @@ const TransactionFragment = () => {
   const BSRef = useRef<any>();
   const theme = useTheme();
 
-  const idToDelete = useRef<string | null>(null);
+  type transactionDeleteDTO = {
+    transactionId: string;
+    categoryId: string;
+    amount: number;
+  };
+
+  const idToDelete = useRef<transaction | null>(null);
   const [showDialog, setD] = useState(false);
 
   return (
@@ -52,7 +59,7 @@ const TransactionFragment = () => {
               {...item}
               onPress={(): void => {
                 BSRef.current.open();
-                idToDelete.current = item.id!;
+                idToDelete.current = item;
               }}
             />
           );

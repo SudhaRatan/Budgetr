@@ -161,10 +161,26 @@ export const createTransaction = (uid: string, transaction: transaction) => {
   } catch (error) {}
 };
 
-export const deleteTransaction = (transactionId: string) => {
+export const deleteTransaction = (transaction: transaction) => {
   try {
-    if (transactionId) {
-      _firestore.collection("transactions").doc(transactionId).delete();
+    if (transaction.id) {
+      _firestore.collection("transactions").doc(transaction.id).delete();
+      _firestore
+        .collection("categories")
+        .doc(transaction.categoryFromId)
+        .update({
+          totalAmount: firebase.firestore.FieldValue.increment(
+            transaction.amount
+          ),
+        });
+      _firestore
+        .collection("categories")
+        .doc(transaction.categoryToId)
+        .update({
+          totalAmount: firebase.firestore.FieldValue.increment(
+            -transaction.amount
+          ),
+        });
     }
   } catch (error) {
     console.error(error);

@@ -92,6 +92,7 @@ export default function Account() {
       </View>
       <View style={{ gap: 20 }}>
         <Button
+          uppercase
           mode="contained-tonal"
           style={{ backgroundColor: th.colors.tertiaryContainer }}
           textColor={th.colors.tertiary}
