@@ -1,13 +1,29 @@
 import ThemedBackground from "@/src/components/ThemedBackground";
 import { useAuthStore } from "@/src/stores/authStore";
-import { StatusBar, StyleSheet, useColorScheme, View } from "react-native";
-import { Button, SegmentedButtons, Text, useTheme } from "react-native-paper";
+import {
+  StatusBar,
+  StyleSheet,
+  ToastAndroid,
+  useColorScheme,
+  View,
+} from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  Dialog,
+  SegmentedButtons,
+  Text,
+  useTheme,
+} from "react-native-paper";
 import { firebaseAuth } from "../_layout";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import { usePreferenceStore } from "@/src/stores/preferencesStore";
 import { useState } from "react";
+import { reset } from "@/src/bl/dbFunctions";
 
 export default function Account() {
+  const [deleteShow, setDeleteShow] = useState(false);
+  const [loadingShow, setLoadingShow] = useState(false);
   const user = useAuthStore((state) => state.user);
   const logout = () => {
     if (user) {
@@ -15,9 +31,25 @@ export default function Account() {
     }
   };
   const colorScheme = useColorScheme();
+  const th = useTheme();
 
   const setTheme = usePreferenceStore((state) => state.setTheme);
   const theme = usePreferenceStore((state) => state.theme);
+
+  const resetData = () => {
+    setDeleteShow(false);
+    if (user) {
+      setLoadingShow(true);
+      reset(user.uid)
+        .then(() => {
+          ToastAndroid.show("Reset successful", ToastAndroid.SHORT);
+          setLoadingShow(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
   return (
     <ThemedBackground style={styles.container}>
@@ -58,9 +90,55 @@ export default function Account() {
           ]}
         />
       </View>
-      <Button mode="contained-tonal" onPress={logout}>
-        Logout
-      </Button>
+      <View style={{ gap: 20 }}>
+        <Button
+          mode="contained-tonal"
+          style={{ backgroundColor: th.colors.tertiaryContainer }}
+          textColor={th.colors.tertiary}
+          onPress={() => {
+            setDeleteShow(true);
+          }}
+        >
+          Reset Data
+        </Button>
+        <Button mode="contained-tonal" onPress={logout}>
+          Logout
+        </Button>
+      </View>
+      <Dialog visible={deleteShow} onDismiss={() => setDeleteShow(false)}>
+        <Dialog.Title>
+          <Text>Are you sure?</Text>
+        </Dialog.Title>
+        <Dialog.Content>
+          <Text>This action can't be undone!</Text>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={() => setDeleteShow(false)}>No</Button>
+          <Button
+            style={{ backgroundColor: th.colors.tertiaryContainer }}
+            textColor={th.colors.tertiary}
+            onPress={resetData}
+          >
+            <Text style={{ color: th.colors.tertiary, paddingHorizontal: 15 }}>
+              Yes
+            </Text>
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
+      <Dialog visible={loadingShow}>
+        <Dialog.Content>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 18 }}>Please do not close the app</Text>
+            <ActivityIndicator size={"small"} />
+          </View>
+        </Dialog.Content>
+      </Dialog>
     </ThemedBackground>
   );
 }

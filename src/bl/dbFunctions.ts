@@ -6,6 +6,7 @@ import {
   getDebitCategories as GDC,
   getTransactions as GT,
   deleteTransaction as DT,
+  resetData,
 } from "../db/firestoreDB";
 import { useDataStore } from "../stores/dataStore";
 import { category, transaction } from "../types/dbTypes";
@@ -60,4 +61,8 @@ export const deleteTransaction = (transactionId: string) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const reset = (uid: string) => {
+  return resetData(uid);
 };

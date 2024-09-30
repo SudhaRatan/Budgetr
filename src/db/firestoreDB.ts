@@ -170,3 +170,28 @@ export const deleteTransaction = (transactionId: string) => {
     console.error(error);
   }
 };
+
+export const resetData = async (uid: string) => {
+  try {
+    const res = await _firestore
+      .collection("categories")
+      .where("uid", "==", uid)
+      .get();
+
+    const res2 = await _firestore
+      .collection("transactions")
+      .where("uid", "==", uid)
+      .get();
+
+    const batch = _firestore.batch();
+
+    res.forEach((element) => {
+      batch.delete(element.ref);
+    });
+    res2.forEach((element) => {
+      batch.delete(element.ref);
+    });
+
+    return batch.commit();
+  } catch (error) {}
+};
